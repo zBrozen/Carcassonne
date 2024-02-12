@@ -44,6 +44,7 @@ int main(int argc, char * argv[])
     parseur_csv("tuiles_base_simplifiees.csv", pioche);
     //printf("%c %c %c %c %c", pioche[0].cotes[0], pioche[0].cotes[1], pioche[0].cotes[2], pioche[0].cotes[3], pioche[0].centre);
     afficher_tuile(pioche[71]);
+    printf("FIN\n");
     return 0;
 }
 
