@@ -2,7 +2,7 @@
 #define GAME_STRUCTURES
 
 struct tuile_s{
-    int identifiant;
+    int id;
     char cotes[4]; 
     char centre;
     // ...autres attributs...
