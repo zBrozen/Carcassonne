@@ -72,3 +72,13 @@ Grille:
 	- dimensions 145x145 (statiquement)
 	- grille 2D grille[i][j]
 	- grille 1D grille[i*j]
+
+IA:
+	- Différents types d'IA au fil des années:
+		- Expert : avec des règles définis à respecter (ce qu'on veut faire)
+		- Apprentissage : qui a besoin de comprendre les règles pour se renforcer
+	- Simule un joueur humain
+		-> faire les mêmes actions
+		-> seul diff avec un vrai joueur sont les inputs (pour un tour il faut juste une option sur le joueur qui détermine le type de joueur)
+	- Besoin d'un système de choix
+		- Scoreboard: tableau qui prend un score des différents choix puis détermine l'input à faire
