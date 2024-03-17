@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void affichage(struct tuile_s * grille, int dx, int dy){
+void affichage(struct tuile_s ** grille, int dx, int dy){
     /* Affiche la grille qui affichera un terrain 72x72.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 */
     
