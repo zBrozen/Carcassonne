@@ -63,6 +63,8 @@ Pioche:
 			liste de pointeur vers des tuiles
 			pile
 			file
+		Melange:
+			On applique une permutation sur la pioche directement (sans passer par un autre tableau) et penser à ne pas mélanger le premier élément #Revoir MelangeTabEx
 	- Actions:
 		1 Joueur pioche: Dépiler
 		2 test si vide: fin de partie

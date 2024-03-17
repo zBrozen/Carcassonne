@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
 #include "lecteur_csv.h"
@@ -39,4 +40,42 @@ void parseur_csv(char * fname, struct tuile_s * pioche)
         tuile ++;
     }
     fclose(fic);
+    melange_pioche(pioche);
+}
+
+void melange_pioche(struct tuile_s * pioche){
+    srand(time(NULL));
+    int i, ra, tempid;
+    char tempc0, tempc1, tempc2, tempc3, tempc4;
+
+    for(i = 71; i > 0; i--){
+        /* Permet de sélectionner toutes les position de la pioche sans prendre la première tuile */
+        ra = (rand()% i)+1;
+
+        // Save des temps de i
+        tempid = pioche[i].id;
+        tempc0 = pioche[i].cotes[0];
+        tempc1 = pioche[i].cotes[1];
+        tempc2 = pioche[i].cotes[2];
+        tempc3 = pioche[i].cotes[3];
+        tempc4 = pioche[i].centre;
+
+        // Permutation entre i et ra
+        pioche[i].id = pioche[ra].id;
+        pioche[i].cotes[0] = pioche[ra].cotes[0];
+        pioche[i].cotes[1] = pioche[ra].cotes[1];
+        pioche[i].cotes[2] = pioche[ra].cotes[2];
+        pioche[i].cotes[3] = pioche[ra].cotes[3];
+        pioche[i].centre = pioche[ra].centre;
+
+        // Redef de ra avec les temp de i
+        pioche[ra].id = tempid;
+        pioche[ra].cotes[0] = tempc0;
+        pioche[ra].cotes[1] = tempc1;
+        pioche[ra].cotes[2] = tempc2;
+        pioche[ra].cotes[3] = tempc3;
+        pioche[ra].centre = tempc4;
+
+        //printf("t_melange[%d]=%d\n", i, t_ordre[i]);
+    }
 }
