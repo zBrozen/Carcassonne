@@ -20,6 +20,7 @@ void affichage(struct tuile_s ** grille, int dx, int dy){
         if(lig/10 >= 1) printf("\n%d", lig);
         else printf("\n %d", lig);
         // Suite test tuile
+        printf("");
 
     }
     printf("\n\n");
