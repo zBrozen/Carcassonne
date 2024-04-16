@@ -17,12 +17,20 @@ int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx){
     return 0;
 }
 
+void affichage_couleurs(char c){
+    if(c == 'v') printf("\033[0;31m%c\033[0m", c);
+    if(c == 'p') printf("\033[0;32m%c\033[0m", c);
+    if(c == 'r') printf("\033[0;36m%c\033[0m", c);
+    if(c == 'a') printf("\033[0;35m%c\033[0m", c);
+    if(c == 'f') printf("\033[0;33m%c\033[0m", c);
+}
+
 void affichage(struct tuile_s grille[72][72], int dx, int dy){
     /* Affiche la grille qui affichera un terrain 72x72.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
     
-    printf("    ");
+    printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){
         // Def coords axes x
         if(col/10 >= 1) printf("%d ", col); // Condition permettant de centrer les chiffres
@@ -31,16 +39,16 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
     printf("\n");
     for(int lig = dy; lig < dy+N; lig++){
         printf("\n");
-        // Tête de tuile
-        // printf("      "); // 3 esp pour l'axe + 3 esp pour la tête de la tuile
-        // printf("%c", grille[0][0].cotes[1]);
         
         // Véfif tuile
         if(recherche_tuile(grille, lig, dx) == 1){
             // Tête(s) de tuile(s)
             printf("     "); // Esp de 5 depuis l'axe, sinon ?
             for(int col = dx; col < dx+N; col++){
-                if(grille[lig][col].id != -1) printf("%c  ", grille[lig][col].cotes[1]);
+                if(grille[lig][col].id != -1){
+                    affichage_couleurs(grille[lig][col].cotes[1]);
+                    printf("  ");
+                }
                 else printf("   ");
             }
             // Axe y
@@ -50,14 +58,19 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             // Corps de tuile(s)
             printf("  "); // Esp de 4 depuis l'axe
             for(int col = dx; col < dx+N; col++){
-                if(grille[lig][col].id != -1) printf("%c%c%c",grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
+                if(grille[lig][col].id != -1){
+                    affichage_couleurs(grille[lig][col].cotes[0]); affichage_couleurs(grille[lig][col].centre); affichage_couleurs(grille[lig][col].cotes[2]);
+                }
                 else printf("   ");
             }
 
             // Pied de tuile(s)
             printf("\n     ");
             for(int col = dx; col < dx+N; col++){
-                if(grille[lig][col].id != -1) printf("%c  ", grille[lig][col].cotes[3]);
+                if(grille[lig][col].id != -1){
+                    affichage_couleurs(grille[lig][col].cotes[3]);
+                    printf("  ");
+                } 
                 else printf("   ");
             }
         }
@@ -67,16 +80,6 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
         else printf("\n %d", lig);
         printf("\n");
         }
-        
-        // Cas: corp de tuile -> ligne y
-        // printf("   "); // 3 espaces avec l'axe des y
-        // printf("%c%c%c", grille[0][0].cotes[0], grille[0][0].centre, grille[0][0].cotes[2]);
-
-        // Cas: pied de tuile -> ligne y + 1
-        // printf("\n");
-        // printf("      ");
-        // printf("%c", grille[0][0].cotes[3]);
-
     }
     printf("\n\n");
 }

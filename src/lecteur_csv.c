@@ -29,7 +29,8 @@ void parseur_csv(char * fname, struct tuile_s * pioche)
         token = strtok(NULL, ",");
         s = token[0];
         token = strtok(NULL, ",");
-        c = token[0];
+        if(token[4] == 'a') c = 'f';
+        else c = token[0];
 
         pioche[tuile].id = tuile;
         pioche[tuile].cotes[0] = e;

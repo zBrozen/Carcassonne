@@ -12,6 +12,7 @@ void afficher_tuile(struct tuile_s t);
 
 // Fonctions dans affichage.c
 int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx);
+void affichage_couleurs(char c);
 void affichage(struct tuile_s grille[72][72], int dx, int dy);
 
 #endif // GAME_STRUCTURES

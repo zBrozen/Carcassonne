@@ -37,6 +37,20 @@ int main(int argc, char * argv[])
     grille[7][7].cotes[3] = pioche[0].cotes[3];
     grille[7][7].centre = pioche[0].centre;
 
+    grille[7][8].id = pioche[0].id;
+    grille[7][8].cotes[0] = pioche[0].cotes[0];
+    grille[7][8].cotes[1] = pioche[0].cotes[1];
+    grille[7][8].cotes[2] = pioche[0].cotes[2];
+    grille[7][8].cotes[3] = pioche[0].cotes[3];
+    grille[7][8].centre = pioche[0].centre;
+
+    grille[8][7].id = pioche[0].id;
+    grille[8][7].cotes[0] = pioche[11].cotes[0];
+    grille[8][7].cotes[1] = pioche[11].cotes[1];
+    grille[8][7].cotes[2] = pioche[11].cotes[2];
+    grille[8][7].cotes[3] = pioche[11].cotes[3];
+    grille[8][7].centre = pioche[11].centre;
+
     affichage(grille, 0, 0);
     printf("FIN de partie\n");
     return 0;
