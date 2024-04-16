@@ -2,25 +2,80 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void affichage(struct tuile_s ** grille, int dx, int dy){
-    /* Affiche la grille qui affichera un terrain 72x72.
-    L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 */
-    
-    for(int col = dx; col < dx+16; col++){
-        // Def coords axes x
-        if(col/10 >= 1) printf("%d   ", col);
-        else printf(" %d   ", col);
+#define N 16 // Taille de l'affichage de la grille
+
+int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx){
+    /* Permet de faire le cas de ligne vide:
+    Prend en paramètres la grille, la ligne à étudier, et la valeurs de départ de la colonne 
+    (pour éviter de check toute la ligne) */
+
+    for(int col = dx; col < dx+N; col++){
+        if(grille[lig][col].id != -1){
+            return 1;
+        }
     }
-    for(int lig = dy+1; lig < dy+16; lig++){
-        // Def test tuile
+    return 0;
+}
+
+void affichage(struct tuile_s grille[72][72], int dx, int dy){
+    /* Affiche la grille qui affichera un terrain 72x72.
+    L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
+    Les paramètres dx/dy placent la grille à certaines coordonnées*/
+    
+    printf("    ");
+    for(int col = dx; col < dx+N; col++){
+        // Def coords axes x
+        if(col/10 >= 1) printf("%d ", col); // Condition permettant de centrer les chiffres
+        else printf(" %d ", col);
+    }
+    printf("\n");
+    for(int lig = dy; lig < dy+N; lig++){
         printf("\n");
-        printf("     "); // 2 esp pour l'axe + 3 esp pour la tête de la tuile
-        printf("%c", grille[0].cotes[1]);
+        // Tête de tuile
+        // printf("      "); // 3 esp pour l'axe + 3 esp pour la tête de la tuile
+        // printf("%c", grille[0][0].cotes[1]);
+        
+        // Véfif tuile
+        if(recherche_tuile(grille, lig, dx) == 1){
+            // Tête(s) de tuile(s)
+            printf("     "); // Esp de 5 depuis l'axe, sinon ?
+            for(int col = dx; col < dx+N; col++){
+                if(grille[lig][col].id != -1) printf("%c  ", grille[lig][col].cotes[1]);
+                else printf("   ");
+            }
+            // Axe y
+            if(lig/10 >= 1) printf("\n%d", lig);
+            else printf("\n %d", lig);
+            
+            // Corps de tuile(s)
+            printf("  "); // Esp de 4 depuis l'axe
+            for(int col = dx; col < dx+N; col++){
+                if(grille[lig][col].id != -1) printf("%c%c%c",grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
+                else printf("   ");
+            }
+
+            // Pied de tuile(s)
+            printf("\n     ");
+            for(int col = dx; col < dx+N; col++){
+                if(grille[lig][col].id != -1) printf("%c  ", grille[lig][col].cotes[3]);
+                else printf("   ");
+            }
+        }
+        else{
         // Def coords axes y
         if(lig/10 >= 1) printf("\n%d", lig);
         else printf("\n %d", lig);
-        // Suite test tuile
-        printf("");
+        printf("\n");
+        }
+        
+        // Cas: corp de tuile -> ligne y
+        // printf("   "); // 3 espaces avec l'axe des y
+        // printf("%c%c%c", grille[0][0].cotes[0], grille[0][0].centre, grille[0][0].cotes[2]);
+
+        // Cas: pied de tuile -> ligne y + 1
+        // printf("\n");
+        // printf("      ");
+        // printf("%c", grille[0][0].cotes[3]);
 
     }
     printf("\n\n");
