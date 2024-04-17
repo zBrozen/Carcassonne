@@ -46,8 +46,8 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("     "); // Esp de 5 depuis l'axe, sinon ?
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    affichage_couleurs(grille[lig][col].cotes[1]);
-                    printf("  ");
+                    // affichage_couleurs(grille[lig][col].cotes[1]);
+                    printf("%c  ", grille[lig][col].cotes[1]);
                 }
                 else printf("   ");
             }
@@ -59,7 +59,8 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("  "); // Esp de 4 depuis l'axe
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    affichage_couleurs(grille[lig][col].cotes[0]); affichage_couleurs(grille[lig][col].centre); affichage_couleurs(grille[lig][col].cotes[2]);
+                    // affichage_couleurs(grille[lig][col].cotes[0]); affichage_couleurs(grille[lig][col].centre); affichage_couleurs(grille[lig][col].cotes[2]);
+                    printf("%c%c%c", grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
                 }
                 else printf("   ");
             }
@@ -68,8 +69,8 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("\n     ");
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    affichage_couleurs(grille[lig][col].cotes[3]);
-                    printf("  ");
+                    // affichage_couleurs(grille[lig][col].cotes[3]);
+                    printf("%c  ", grille[lig][col].cotes[3]);
                 } 
                 else printf("   ");
             }

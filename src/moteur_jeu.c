@@ -27,7 +27,8 @@ int main(int argc, char * argv[])
     init_grille(grille);
 
     // Debug affichage tuile
-    //afficher_tuile(pioche[71]);
+    // for(int i = 0; i < 72; i++)
+    // afficher_tuile(pioche[i]);
 
     // Debug affichage grille avec tuile
     grille[7][7].id = pioche[0].id;
@@ -51,13 +52,22 @@ int main(int argc, char * argv[])
     grille[8][7].cotes[3] = pioche[11].cotes[3];
     grille[8][7].centre = pioche[11].centre;
 
-    affichage(grille, 0, 0);
+    // affichage(grille, 0, 0);
+
+    // Debug action
+    struct tuile_s tuile;
+    tuile = piocher(pioche, 1);
+    afficher_tuile(tuile);
+    // tuile = rotation(tuile, 0);
+    // afficher_tuile(tuile);
+    
     printf("FIN de partie\n");
     return 0;
 }
 
 void afficher_tuile(struct tuile_s t){
     // Fonction de debug de tuile
-    system("clear");
+    // system("clear");
     printf("\t%c\n%c\t%c\t%c\n\t%c\n", t.cotes[1], t.cotes[0], t.centre, t.cotes[2], t.cotes[3]);
+    printf("\n\n");
 }
