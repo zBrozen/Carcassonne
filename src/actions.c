@@ -52,6 +52,7 @@ struct tuile_s rotation(struct tuile_s tuile, int sens){
 struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
     /* Def une liste de possibilites qui permet de placer la tuile piochee */
 
+    // Init liste
     struct coords * liste;
     liste = (struct coords *)malloc(72 * sizeof(struct coords));
     for(int i = 0; i < 72; i++){
@@ -88,7 +89,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
             ok = 1;
 
             if(tuile.cotes[c] == tuiles_placees[t].cotes[0] && (tuiles_placees[t].c.x - 1) >= 0
-            && grille[tuiles_placees[t].c.x - 1][tuiles_placees[t].c.y].id == -1){
+            && grille[tuiles_placees[t].c.y][tuiles_placees[t].c.x - 1].id == -1){
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -106,38 +107,38 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                     nb_rota++;
                 }
                 // Verif de la compa autour du placement de la nouvelle tuile (donc on utilise la position de tuile placee)
-                int x = tuiles_placees[t].c.x - 1, y = tuiles_placees[t].c.y;
+                int y = tuiles_placees[t].c.y, x = tuiles_placees[t].c.x - 1;
                 
-                if(y+1 < 72 && grille[x][y+1].id != -1){
-                    if(tuile_copie.cotes[3] != grille[x][y+1].cotes[1]){
+                if(y+1 < 72 && grille[y+1][x].id != -1){
+                    if(tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
                         ok = 0;
                         break;
                     }
                 }
-                if(ok == 1 && x-1 >= 0 && grille[x-1][y].id != -1){
-                    if(tuile_copie.cotes[0] != grille[x-1][y].cotes[2]){
+                if(ok == 1 && x-1 >= 0 && grille[y][x-1].id != -1){
+                    if(tuile_copie.cotes[0] != grille[y][x-1].cotes[2]){
                         ok = 0;
                         break;
                     }
                 }
-                if(ok == 1 && y-1 >= 0 && grille[x][y-1].id != -1){
-                    if(tuile_copie.cotes[1] != grille[x][y-1].cotes[3]){
+                if(ok == 1 && y-1 >= 0 && grille[y-1][x].id != -1){
+                    if(tuile_copie.cotes[1] != grille[y-1][x].cotes[3]){
                         ok = 0;
                         break;
                     }
                 }
 
-                // Def le placement
+                // Def le placement 
                 if(ok == 1){
-                    liste[index].x = tuiles_placees[t].c.x - 1;
                     liste[index].y = tuiles_placees[t].c.y;
+                    liste[index].x = tuiles_placees[t].c.x - 1;
                     liste[index].rota = nb_rota;
                     index++;
                 }
             }
 
             if(tuile.cotes[c] == tuiles_placees[t].cotes[1] && (tuiles_placees[t].c.y - 1) >= 0 
-            && grille[tuiles_placees[t].c.x][tuiles_placees[t].c.y - 1].id == -1){
+            && grille[tuiles_placees[t].c.y - 1][tuiles_placees[t].c.x].id == -1){
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -152,35 +153,35 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                     c2 = (c2 + 1) % 4;
                     nb_rota++;
                 }
-                int x = tuiles_placees[t].c.x, y = tuiles_placees[t].c.y - 1;
+                int y = tuiles_placees[t].c.y - 1, x = tuiles_placees[t].c.x;
                 
-                if(x+1 < 72 && grille[x+1][y].id != -1){
-                    if(tuile_copie.cotes[2] != grille[x+1][y].cotes[0]){
+                if(x+1 < 72 && grille[y][x+1].id != -1){
+                    if(tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
                         ok = 0;
                     }
                 }
-                if(x-1 >= 0 && grille[x-1][y].id != -1){
-                    if(tuile_copie.cotes[0] != grille[x-1][y].cotes[2]){
+                if(x-1 >= 0 && grille[y][x-1].id != -1){
+                    if(tuile_copie.cotes[0] != grille[y][x-1].cotes[2]){
                         ok = 0;
                     }
                 }
-                if(y-1 >= 0 && grille[x][y-1].id != -1){
-                    if(tuile_copie.cotes[1] != grille[x][y-1].cotes[3]){
+                if(y-1 >= 0 && grille[y-1][x].id != -1){
+                    if(tuile_copie.cotes[1] != grille[y-1][x].cotes[3]){
                         ok = 0;
                     }
                 }
 
                 // Def le placement
                 if(ok == 1){
-                    liste[index].x = tuiles_placees[t].c.x;
                     liste[index].y = tuiles_placees[t].c.y - 1;
+                    liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
                     index++;
                 }
             }
 
             if(tuile.cotes[c] == tuiles_placees[t].cotes[2] && (tuiles_placees[t].c.x + 1) < 72 
-            && grille[tuiles_placees[t].c.x + 1][tuiles_placees[t].c.y].id == -1){
+            && grille[tuiles_placees[t].c.y][tuiles_placees[t].c.x + 1].id == -1){
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -195,35 +196,35 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                     c2 = (c2 + 1) % 4;
                     nb_rota++;
                 }
-                int x = tuiles_placees[t].c.x + 1, y = tuiles_placees[t].c.y;
+                int y = tuiles_placees[t].c.y, x = tuiles_placees[t].c.x + 1;
                 
-                if(y+1 < 72 && grille[x][y+1].id != -1){
-                    if(tuile_copie.cotes[3] != grille[x][y+1].cotes[1]){
+                if(y+1 < 72 && grille[y+1][x].id != -1){
+                    if(tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
                         ok = 0;
                     }
                 }
-                if(x+1 >= 0 && grille[x-1][y].id != -1){
-                    if(tuile_copie.cotes[2] != grille[x+1][y].cotes[0]){
+                if(x+1 >= 0 && grille[y][x+1].id != -1){
+                    if(tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
                         ok = 0;
                     }
                 }
-                if(y-1 >= 0 && grille[x][y-1].id != -1){
-                    if(tuile_copie.cotes[1] != grille[x][y-1].cotes[3]){
+                if(y-1 >= 0 && grille[y-1][x].id != -1){
+                    if(tuile_copie.cotes[1] != grille[y-1][x].cotes[3]){
                         ok = 0;
                     }
                 }
 
                 // Def le placement
                 if(ok == 1){
-                    liste[index].x = tuiles_placees[t].c.x + 1;
                     liste[index].y = tuiles_placees[t].c.y;
+                    liste[index].x = tuiles_placees[t].c.x + 1;
                     liste[index].rota = nb_rota;
                     index++;
                 }
             }
 
             if(tuile.cotes[c] == tuiles_placees[t].cotes[3] && (tuiles_placees[t].c.y + 1) < 72 
-            && grille[tuiles_placees[t].c.x][tuiles_placees[t].c.y + 1].id == -1){
+            && grille[tuiles_placees[t].c.y + 1][tuiles_placees[t].c.x].id == -1){
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -238,28 +239,28 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                     c2 = (c2 + 1) % 4;
                     nb_rota++;
                 }
-                int x = tuiles_placees[t].c.x, y = tuiles_placees[t].c.y + 1;
+                int y = tuiles_placees[t].c.y + 1, x = tuiles_placees[t].c.x;
                 
-                if(y+1 < 72 && grille[x][y+1].id != -1){
-                    if(tuile_copie.cotes[3] != grille[x][y+1].cotes[1]){
+                if(y+1 < 72 && grille[y+1][x].id != -1){
+                    if(tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
                         ok = 0;
                     }
                 }
-                if(x+1 >= 0 && grille[x-1][y].id != -1){
-                    if(tuile_copie.cotes[2] != grille[x+1][y].cotes[0]){
+                if(x+1 >= 0 && grille[y][x+1].id != -1){
+                    if(tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
                         ok = 0;
                     }
                 }
-                if(x-1 >= 0 && grille[x-1][y].id != -1){
-                    if(tuile_copie.cotes[0] != grille[x-1][y].cotes[2]){
+                if(x-1 >= 0 && grille[y][x-1].id != -1){
+                    if(tuile_copie.cotes[0] != grille[y][x-1].cotes[2]){
                         ok = 0;
                     }
                 }
 
                 // Def le placement
                 if(ok == 1){
-                    liste[index].x = tuiles_placees[t].c.x;
                     liste[index].y = tuiles_placees[t].c.y + 1;
+                    liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
                     index++;
                 } 
@@ -270,6 +271,42 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
         }
     }
     return liste;
+}
+
+void add_gr(struct tuile_s grille[72][72], struct tuile_s tuile, int x, int y){
+    grille[y][x].id = tuile.id;
+    grille[y][x].cotes[0] = tuile.cotes[0];
+    grille[y][x].cotes[1] = tuile.cotes[1];
+    grille[y][x].cotes[2] = tuile.cotes[2];
+    grille[y][x].cotes[3] = tuile.cotes[3];
+    grille[y][x].centre = tuile.centre;
+}
+
+void rem_gr(struct tuile_s grille[72][72], int x, int y){
+    grille[y][x].id = -1;
+}
+
+void previsu(struct tuile_s grille[72][72], struct tuile_s tuile, struct coords liste_compa[72], int l_index){
+    /* Permet d'ajouter a la grille une tuile temporaire pour previsualiser le placement */
+
+    // Init tuile copie qui concerve la config initiale afin d'assurer que les asserts lors de la rotation soient justes
+    struct tuile_s tuile_copie;
+    tuile_copie.id = tuile.id;
+    tuile_copie.cotes[0] = tuile.cotes[0];
+    tuile_copie.cotes[1] = tuile.cotes[1];
+    tuile_copie.cotes[2] = tuile.cotes[2];
+    tuile_copie.cotes[3] = tuile.cotes[3];
+    tuile_copie.centre = tuile.centre;
+
+    // Modif tuile
+    tuile.id = -2;
+    int x = liste_compa[l_index].x, y = liste_compa[l_index].y;
+    for(int i = 0; i < liste_compa[l_index].rota; i++){
+        tuile = rotation(tuile, 0);
+    }
+
+    add_gr(grille, tuile, x, y);
+    affichage(grille, 0, 0);
 }
 
 void free_liste(struct coords * c){
@@ -286,33 +323,22 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[72][7
     afficher_tuile(tuile);
     
     // Manipulation tuile
-    int choix = -1;
+    int mode = -1; // -1: debug, 0: se deplacer dans grille, 1: manipuler tuile
 
-    // Debug : choix = -1
-    if(choix == -1){
-        printf("ALLO\n");
-        struct coords * liste_compa;
-        int i = 0;
-        liste_compa = def_liste_placements(grille, tuiles_placees, tuile);
-        while(i < 72 && liste_compa[i].x != -1){
-            printf("%d: %d, %d, %d\n", i, liste_compa[i].x, liste_compa[i].y, liste_compa[i].rota);
-            i++;
-        }
-        free_liste(liste_compa);
+    // Def liste compa pour placement
+    struct coords * liste_compa;
+    liste_compa = def_liste_placements(grille, tuiles_placees, tuile);
+    for(int e = 0; e < 72 && liste_compa[e].x != -1; e++)
+        previsu(grille, tuile, liste_compa, e);
+    // Debug liste
+    int i = 0;
+    while(i < 72 && liste_compa[i].x != -1){
+        printf("%d: x%d, y%d, r%d\n", i, liste_compa[i].x, liste_compa[i].y, liste_compa[i].rota);
+        i++;
     }
 
-    // Rotation
-    if(choix == 0){
-        int sens = 0;
-        while(sens != -1){
-            printf("Entrer un sens: ");
-            scanf("%d", &sens);
-            if(sens == 0 || sens == 1) tuile = rotation(tuile, sens);
-            else if (sens == -1) printf("Rotation terminée\n");
-            else printf("Entrée incorrecte");
-            afficher_tuile(tuile);
-        }
-    }
+    index++;
+    free_liste(liste_compa);
 
     return 1;
 }

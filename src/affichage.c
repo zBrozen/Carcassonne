@@ -29,6 +29,7 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
     /* Affiche la grille qui affichera un terrain 72x72.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
+    system("clear");
     
     printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){
