@@ -22,11 +22,13 @@ struct tuile_s{
 };
 
 void init_grille(struct tuile_s grille[72][72]);
+void init_tuiles_placees(struct tuile_s tuiles_placees[72]);
+void init_joueur(struct joueur j, int id, int ia);
 void afficher_tuile(struct tuile_s t);
 
 // Fonctions dans affichage.c
 int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx);
-void affichage_couleurs(char c);
+void affichage_couleurs(char c, int id);
 void affichage(struct tuile_s grille[72][72], int dx, int dy);
 
 // Fonctions dans actions.c

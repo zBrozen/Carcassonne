@@ -25,6 +25,12 @@ void init_tuiles_placees(struct tuile_s tuiles_placees[72]){
         tuiles_placees[i].id = -1;
 }
 
+void init_joueur(struct joueur j, int id, int ia){
+    j.id = id;
+    j.nbm = 8;
+    j.ia = ia;
+}
+
 int main(int argc, char * argv[])
 {
     system("clear");
@@ -38,41 +44,18 @@ int main(int argc, char * argv[])
     // afficher_tuile(pioche[i]);
 
     // Debug affichage grille avec tuile
-    grille[7][7].id = pioche[0].id;
-    grille[7][7].cotes[0] = pioche[0].cotes[0];
-    grille[7][7].cotes[1] = pioche[0].cotes[1];
-    grille[7][7].cotes[2] = pioche[0].cotes[2];
-    grille[7][7].cotes[3] = pioche[0].cotes[3];
-    grille[7][7].centre = pioche[0].centre;
+    grille[3][3].id = pioche[0].id;
+    grille[3][3].cotes[0] = pioche[0].cotes[0];
+    grille[3][3].cotes[1] = pioche[0].cotes[1];
+    grille[3][3].cotes[2] = pioche[0].cotes[2];
+    grille[3][3].cotes[3] = pioche[0].cotes[3];
+    grille[3][3].centre = pioche[0].centre;
 
-    grille[7][7].c.x = 7;
-    grille[7][7].c.y = 7;
-    printf("%d %d\n", grille[7][7].c.x, grille[7][7].c.y);
-
-    // grille[7][8].id = pioche[0].id;
-    // grille[7][8].cotes[0] = pioche[0].cotes[0];
-    // grille[7][8].cotes[1] = pioche[0].cotes[1];
-    // grille[7][8].cotes[2] = pioche[0].cotes[2];
-    // grille[7][8].cotes[3] = pioche[0].cotes[3];
-    // grille[7][8].centre = pioche[0].centre;
-
-    // grille[8][7].id = pioche[0].id;
-    // grille[8][7].cotes[0] = pioche[11].cotes[0];
-    // grille[8][7].cotes[1] = pioche[11].cotes[1];
-    // grille[8][7].cotes[2] = pioche[11].cotes[2];
-    // grille[8][7].cotes[3] = pioche[11].cotes[3];
-    // grille[8][7].centre = pioche[11].centre;
-
-    // affichage(grille, 0, 0);
-
-    // Debug action
-    // struct tuile_s tuile;
-    // tuile = piocher(pioche, 1);
-    // afficher_tuile(tuile);
-    // tuile = rotation(tuile, 0);
-    // afficher_tuile(tuile);
+    grille[3][3].c.x = 3;
+    grille[3][3].c.y = 3;
 
     struct joueur j1;
+    init_joueur(j1, 0, 0);
     
     tuiles_placees[0].id = pioche[0].id;
     tuiles_placees[0].cotes[0] = pioche[0].cotes[0];
@@ -80,11 +63,14 @@ int main(int argc, char * argv[])
     tuiles_placees[0].cotes[2] = pioche[0].cotes[2];
     tuiles_placees[0].cotes[3] = pioche[0].cotes[3];
     tuiles_placees[0].centre = pioche[0].centre;
-    tuiles_placees[0].c.x = 7;
-    tuiles_placees[0].c.y = 7;
+    tuiles_placees[0].c.x = 3;
+    tuiles_placees[0].c.y = 3;
 
-
-    tour(j1, pioche, grille, tuiles_placees, 1);
+    int index_pioche = 1;
+    while(index_pioche < 72){
+        tour(j1, pioche, grille, tuiles_placees, index_pioche);
+        index_pioche++;
+    }
 
 
     printf("FIN de partie\n");

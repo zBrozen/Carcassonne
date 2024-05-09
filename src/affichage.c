@@ -17,19 +17,26 @@ int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx){
     return 0;
 }
 
-void affichage_couleurs(char c){
-    if(c == 'v') printf("\033[0;31m%c\033[0m", c);
-    if(c == 'p') printf("\033[0;32m%c\033[0m", c);
-    if(c == 'r') printf("\033[0;36m%c\033[0m", c);
-    if(c == 'a') printf("\033[0;35m%c\033[0m", c);
-    if(c == 'f') printf("\033[0;33m%c\033[0m", c);
+void affichage_couleurs(char c, int id){
+    if(id == -2){
+        printf("\e[40m\e[0;37m%c\e[0m", c);
+    }
+    else{
+        if(c == 'v') printf("\e[41m%d\e[0m", id); // Rouge
+        if(c == 'p') printf("\e[42m%d\e[0m", id); // Vert
+        if(c == 'r') printf("\e[46m%d\e[0m", id); // Bleu cyan
+        if(c == 'a') printf("\e[45m%d\e[0m", id); // Violet
+        if(c == 'f') printf("\e[44m%d\e[0m", id); // Bleu foncé
+        if(c == 'b') printf("\e[43m%d\e[0m", id); // Jaune
+    }
 }
 
 void affichage(struct tuile_s grille[72][72], int dx, int dy){
     /* Affiche la grille qui affichera un terrain 72x72.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
-    system("clear");
+
+    // system("clear");
     
     printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){
@@ -47,8 +54,8 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("     "); // Esp de 5 depuis l'axe, sinon ?
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    // affichage_couleurs(grille[lig][col].cotes[1]);
-                    printf("%c  ", grille[lig][col].cotes[1]);
+                    affichage_couleurs(grille[lig][col].cotes[1], grille[lig][col].id); printf("  ");
+                    // printf("%c  ", grille[lig][col].cotes[1]);
                 }
                 else printf("   ");
             }
@@ -60,8 +67,10 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("  "); // Esp de 4 depuis l'axe
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    // affichage_couleurs(grille[lig][col].cotes[0]); affichage_couleurs(grille[lig][col].centre); affichage_couleurs(grille[lig][col].cotes[2]);
-                    printf("%c%c%c", grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
+                    affichage_couleurs(grille[lig][col].cotes[0], grille[lig][col].id); 
+                    affichage_couleurs(grille[lig][col].centre, grille[lig][col].id); 
+                    affichage_couleurs(grille[lig][col].cotes[2], grille[lig][col].id);
+                    // printf("%c%c%c", grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
                 }
                 else printf("   ");
             }
@@ -70,8 +79,8 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
             printf("\n     ");
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    // affichage_couleurs(grille[lig][col].cotes[3]);
-                    printf("%c  ", grille[lig][col].cotes[3]);
+                    affichage_couleurs(grille[lig][col].cotes[3], grille[lig][col].id); printf("  ");
+                    // printf("%c  ", grille[lig][col].cotes[3]);
                 } 
                 else printf("   ");
             }
