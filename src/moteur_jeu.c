@@ -1,5 +1,8 @@
 #include "game_structures.h"
 #include "lecteur_csv.h"
+#include "affichage.h"
+#include "actions.h"
+#include "score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -75,11 +78,4 @@ int main(int argc, char * argv[])
 
     printf("FIN de partie\n");
     return 0;
-}
-
-void afficher_tuile(struct tuile_s t){
-    // Fonction de debug de tuile
-    // system("clear");
-    printf("\t%c\n%c\t%c\t%c\n\t%c\n", t.cotes[1], t.cotes[0], t.centre, t.cotes[2], t.cotes[3]);
-    printf("\n\n");
 }

@@ -1,9 +1,11 @@
 #include "game_structures.h"
+#include "affichage.h"
+#include "score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#define N 16 // Taille de l'affichage de la grille
+#define N 8 // Taille de l'affichage de la grille
 
 struct tuile_s piocher(struct tuile_s pioche[72], int index){
     /* Permet de déplacer les tuiles dans les mains du joueur (et donc de la grille)
@@ -51,6 +53,18 @@ struct tuile_s rotation(struct tuile_s tuile, int sens){
     return res;
 }
 
+int doublon(struct coords liste_placements[72], struct tuile_s tuiles_placees[72], int t, int add_x, int add_y, int nb_rota){
+    int res = 0, i = 0;
+    while(i < 72 && liste_placements[i].x != -1){
+        if(liste_placements[i].x == tuiles_placees[t].c.x + add_x 
+        && liste_placements[i].y == tuiles_placees[t].c.y + add_y 
+        && liste_placements[i].rota == nb_rota)
+            res = 1;
+        i++;
+    }
+    return res;
+}
+
 struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
     /* Def une liste de possibilites qui permet de placer la tuile piochee */
 
@@ -81,14 +95,6 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
         int c = 0, c2, nb_rota, ok = 1;
         printf("Verif pour %c:\n", tuile.cotes[c]);
         while(c < 4){
-            // printf("debug w\n");
-            // int c1, c2, c3;
-            // c1 = tuile.cotes[c] == tuiles_placees[t].cotes[0];
-            // c2 = (tuiles_placees[t].c.x - 1) >= 0;
-            // c3 = grille[tuiles_placees[t].c.x - 1][tuiles_placees[t].c.y].id == -1;
-            // printf("debug %d\n", tuiles_placees[t].c.x);
-            // printf("c1 = %d c2 = %d c3 = %d\n", c1, c2, c3);
-            // Verif du cotes c (ouest, nord, est, sud)
             
             // Def de ok qui compte la tuile comme compatible et qui permettra d'ajouter des placements
             ok = 1;
@@ -136,7 +142,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 }
 
                 // Def le placement 
-                if(ok == 1){
+                if(ok == 1 && doublon(liste, tuiles_placees, t, -1, 0, nb_rota) == 0){
                     liste[index].y = tuiles_placees[t].c.y;
                     liste[index].x = tuiles_placees[t].c.x - 1;
                     liste[index].rota = nb_rota;
@@ -185,7 +191,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 }
 
                 // Def le placement
-                if(ok == 1){
+                if(ok == 1 && doublon(liste, tuiles_placees, t, 0, -1, nb_rota) == 0){
                     liste[index].y = tuiles_placees[t].c.y - 1;
                     liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
@@ -234,7 +240,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 }
 
                 // Def le placement
-                if(ok == 1){
+                if(ok == 1 && doublon(liste, tuiles_placees, t, 1, 0, nb_rota) == 0){
                     liste[index].y = tuiles_placees[t].c.y;
                     liste[index].x = tuiles_placees[t].c.x + 1;
                     liste[index].rota = nb_rota;
@@ -283,7 +289,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 }
 
                 // Def le placement
-                if(ok == 1){
+                if(ok == 1 && doublon(liste, tuiles_placees, t, 0, 1, nb_rota) == 0){
                     liste[index].y = tuiles_placees[t].c.y + 1;
                     liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
@@ -378,7 +384,7 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[72][7
 
     // Condition qui vérifie si il y a bien des tuiles dans la liste des placements (sinon anormal)
     if(taille_liste != 0){
-        // previsu(grille, tuile, liste_placements, e);
+        previsu(grille, tuile, liste_placements, e);
 
         // Choix du joueur
         int c = -1; // Variable de choix de placement

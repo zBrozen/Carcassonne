@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 16 // Taille de l'affichage de la grille
+#define N 8 // Taille de l'affichage de la grille
 
 int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx){
     /* Permet de faire le cas de ligne vide:
@@ -22,13 +22,20 @@ void affichage_couleurs(char c, int id){
         printf("\e[40m\e[0;37m%c\e[0m", c);
     }
     else{
-        if(c == 'v') printf("\e[41m%d\e[0m", id); // Rouge
-        if(c == 'p') printf("\e[42m%d\e[0m", id); // Vert
-        if(c == 'r') printf("\e[46m%d\e[0m", id); // Bleu cyan
-        if(c == 'a') printf("\e[45m%d\e[0m", id); // Violet
-        if(c == 'f') printf("\e[44m%d\e[0m", id); // Bleu foncé
-        if(c == 'b') printf("\e[43m%d\e[0m", id); // Jaune
+        if(c == 'v') printf("\e[41m \e[0m"); // Rouge
+        if(c == 'p') printf("\e[42m \e[0m"); // Vert
+        if(c == 'r') printf("\e[46m \e[0m"); // Bleu cyan
+        if(c == 'a') printf("\e[45m \e[0m"); // Violet
+        if(c == 'f') printf("\e[44m \e[0m"); // Bleu foncé
+        if(c == 'b') printf("\e[43m \e[0m"); // Jaune
     }
+}
+
+void afficher_tuile(struct tuile_s t){
+    // Fonction de debug de tuile
+    // system("clear");
+    printf("\t%c\n%c\t%c\t%c\n\t%c\n", t.cotes[1], t.cotes[0], t.centre, t.cotes[2], t.cotes[3]);
+    printf("\n\n");
 }
 
 void affichage(struct tuile_s grille[72][72], int dx, int dy){
@@ -36,7 +43,7 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
 
-    // system("clear");
+    system("clear");
     
     printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){

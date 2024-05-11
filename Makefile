@@ -14,7 +14,7 @@ all: $(EXEC)
 run: $(EXEC)
 	$(BIN)$<
 
-$(EXEC): moteur_jeu.o lecteur_csv.o affichage.o actions.o
+$(EXEC): moteur_jeu.o lecteur_csv.o affichage.o actions.o score.o
 	$(CC) $(OBJ)* -I $(INC) -o $(BIN)$@
 	
 moteur_jeu.o: $(SRC)moteur_jeu.c
@@ -27,6 +27,9 @@ affichage.o: $(SRC)affichage.c
 	$(CC) $(CFLAGS) $< -c -I $(INC) -o $(OBJ)$@
 
 actions.o: $(SRC)actions.c
+	$(CC) $(CFLAGS) $< -c -I $(INC) -o $(OBJ)$@
+
+score.o: $(SRC)score.c
 	$(CC) $(CFLAGS) $< -c -I $(INC) -o $(OBJ)$@
 
 clean:
