@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define G 143 // Taille de la grille
 #define N 8 // Taille de l'affichage de la grille
 
 struct tuile_s piocher(struct tuile_s pioche[72], int index){
@@ -55,17 +56,19 @@ struct tuile_s rotation(struct tuile_s tuile, int sens){
 
 int doublon(struct coords liste_placements[72], struct tuile_s tuiles_placees[72], int t, int add_x, int add_y, int nb_rota){
     int res = 0, i = 0;
-    while(i < 72 && liste_placements[i].x != -1){
-        if(liste_placements[i].x == tuiles_placees[t].c.x + add_x 
-        && liste_placements[i].y == tuiles_placees[t].c.y + add_y 
-        && liste_placements[i].rota == nb_rota)
+    while(i < 72 && liste_placements[i].x != -1 && res != 1){
+        if(liste_placements[i].x == tuiles_placees[t].c.x + add_x // tuiles_placees: sert à définir la position et non prendre une tuile déjà placée
+        && liste_placements[i].y == tuiles_placees[t].c.y + add_y
+        && liste_placements[i].rota == nb_rota){
+            printf("doublon\n");
             res = 1;
+        }    
         i++;
     }
     return res;
 }
 
-struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
+struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
     /* Def une liste de possibilites qui permet de placer la tuile piochee */
 
     // Init liste
@@ -87,15 +90,15 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
     int index = 0, t;
     
     for(t = 0; t < 72 && tuiles_placees[t].id != -1; t++){
-        printf("debug for %d", t);
+        // printf("debug for %d", t);
         int compteur_debug = 0;
         /* Premiere verif de chaque cotees de la tuile par rapport a la tuile placee
         On regarde d'abord si l'espace pour placer la tuile est libre et compatible */
 
         int c = 0, c2, nb_rota, ok = 1;
-        printf("Verif pour %c:\n", tuile.cotes[c]);
+        // printf("Verif pour %c:\n", tuile.cotes[c]);
         while(c < 4){
-            
+            // printf("test ??\n");
             // Def de ok qui compte la tuile comme compatible et qui permettra d'ajouter des placements
             ok = 1;
 
@@ -201,9 +204,11 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
             }
 
             ok = 1;
+            // printf("Debug: tuile cotes: %c == tuile placee: %c ? %d\n", tuile.cotes[c], tuiles_placees[t].cotes[2], tuile.cotes[c]==tuiles_placees[t].cotes[2]);
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[2] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[2] == 'v')) 
-            || tuile.cotes[c] == tuiles_placees[t].cotes[2]) && (tuiles_placees[t].c.x + 1) < 72 
+            || tuile.cotes[c] == tuiles_placees[t].cotes[2]) && (tuiles_placees[t].c.x + 1) < 143 
             && grille[tuiles_placees[t].c.y][tuiles_placees[t].c.x + 1].id == -1){
+                // printf("valide 2");
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -221,20 +226,26 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 int y = tuiles_placees[t].c.y, x = tuiles_placees[t].c.x + 1;
                 
                 if(y+1 < 72 && grille[y+1][x].id != -1){
+                    // printf("bizarre0\n");
                     if(!((tuile_copie.cotes[3] == 'v' && grille[y+1][x].cotes[1] == 'b') || (tuile_copie.cotes[3] == 'b' && grille[y+1][x].cotes[1] == 'v'))
                         && tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
+                        // printf("bizarre1\n");
                         ok = 0;
                     }
                 }
                 if(x+1 < 72 && grille[y][x+1].id != -1){
+                    // printf("bizarre2\n");
                     if(!((tuile_copie.cotes[2] == 'v' && grille[y][x+1].cotes[0] == 'b') || (tuile_copie.cotes[2] == 'b' && grille[y][x+1].cotes[0] == 'v'))
                         && tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
+                        // printf("bizarre3\n");
                         ok = 0;
                     }
                 }
                 if(y-1 >= 0 && grille[y-1][x].id != -1){
+                    // printf("bizarre4\n");
                     if(!((tuile_copie.cotes[1] == 'v' && grille[y-1][x].cotes[3] == 'b') || (tuile_copie.cotes[1] == 'b' && grille[y-1][x].cotes[3] == 'v'))
                         && tuile_copie.cotes[1] != grille[y-1][x].cotes[3]){
+                        // printf("bizarre5\n");
                         ok = 0;
                     }
                 }
@@ -250,9 +261,11 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
             }
 
             ok = 1;
+            // printf("Debug: tuile cotes: %c == tuile placee: %c ? %d\n", tuile.cotes[c], tuiles_placees[t].cotes[3], tuile.cotes[c]==tuiles_placees[t].cotes[3]);
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[3] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[3] == 'v'))
-            || tuile.cotes[c] == tuiles_placees[t].cotes[3]) && (tuiles_placees[t].c.y + 1) < 72 
+            || tuile.cotes[c] == tuiles_placees[t].cotes[3]) && (tuiles_placees[t].c.y + 1) < 143 
             && grille[tuiles_placees[t].c.y + 1][tuiles_placees[t].c.x].id == -1){
+                // printf("valide 3");
                 // Init de tuile copie pour definir le nombre de rotation a faire
                 tuile_copie.cotes[0] = tuile.cotes[0];
                 tuile_copie.cotes[1] = tuile.cotes[1];
@@ -270,20 +283,26 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
                 int y = tuiles_placees[t].c.y + 1, x = tuiles_placees[t].c.x;
                 
                 if(y+1 < 72 && grille[y+1][x].id != -1){
+                    // printf("bizarre0\n");
                     if(!((tuile_copie.cotes[3] == 'v' && grille[y+1][x].cotes[1] == 'b') || (tuile_copie.cotes[3] == 'b' && grille[y+1][x].cotes[1] == 'v'))
                         && tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
+                        // printf("bizarre1\n");
                         ok = 0;
                     }
                 }
                 if(x+1 < 72 && grille[y][x+1].id != -1){
+                    // printf("bizarre2\n");
                     if(!((tuile_copie.cotes[2] == 'v' && grille[y][x+1].cotes[3] == 'b') || (tuile_copie.cotes[1] == 'b' && grille[y][x+1].cotes[3] == 'v'))
                         && tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
+                        // printf("bizarre3\n");
                         ok = 0;
                     }
                 }
                 if(x-1 >= 0 && grille[y][x-1].id != -1){
+                    // printf("bizarre4\n");
                     if(!((tuile_copie.cotes[0] == 'v' && grille[y][x-1].cotes[2] == 'b') || (tuile_copie.cotes[0] == 'b' && grille[y][x-1].cotes[2] == 'v'))
                         && tuile_copie.cotes[0] != grille[y][x-1].cotes[2]){
+                        // printf("bizarre5\n");
                         ok = 0;
                     }
                 }
@@ -306,7 +325,7 @@ struct coords * def_liste_placements(struct tuile_s grille[72][72], struct tuile
     return liste;
 }
 
-void add_gr(struct tuile_s grille[72][72], struct tuile_s tuile, int x, int y){
+void add_gr(struct tuile_s grille[G][G], struct tuile_s tuile, int x, int y){
     grille[y][x].id = -2;
     grille[y][x].cotes[0] = tuile.cotes[0];
     grille[y][x].cotes[1] = tuile.cotes[1];
@@ -315,11 +334,11 @@ void add_gr(struct tuile_s grille[72][72], struct tuile_s tuile, int x, int y){
     grille[y][x].centre = tuile.centre;
 }
 
-void rem_gr(struct tuile_s grille[72][72], int x, int y){
+void rem_gr(struct tuile_s grille[G][G], int x, int y){
     grille[y][x].id = -1;
 }
 
-void previsu(struct tuile_s grille[72][72], struct tuile_s tuile, struct coords liste_placements[72], int l_index){
+void previsu(struct tuile_s grille[G][G], struct tuile_s tuile, struct coords liste_placements[72], int l_index){
     /* Permet d'ajouter a la grille une tuile temporaire pour previsualiser le placement */
 
     // Init tuile copie qui permet de concerver la config initiale de tuile afin d'assurer que les asserts lors de la rotation soient justes
@@ -342,18 +361,18 @@ void previsu(struct tuile_s grille[72][72], struct tuile_s tuile, struct coords 
     add_gr(grille, tuile_copie, x, y);
 
     // Definit l'affichage de la grille selon les coordonnées
-    int taille_x = x-N; int taille_y = y-N;
+    int taille_x = x-(N/2); int taille_y = y-(N/2);
     if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
-    affichage(grille, taille_x, taille_y);
-    afficher_tuile(tuile);
+    affichage(grille, taille_x, taille_y, tuile);
+    // afficher_tuile(tuile);
 }
 
 void free_liste(struct coords * c){
     free(c);
 }
 
-int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[72][72], struct tuile_s tuiles_placees[72], int index){
+int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int index){
     /*Effectue un tour pour un certain joueur (ne se lance que si index < 72)
     Le paramètre "index" indique les tuiles restantes dans la pioche artificiellement (car je ne fais que avancer dans la pioche sans retirer les tuiles)*/
     
@@ -361,7 +380,7 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[72][7
     struct tuile_s tuile;
     tuile = piocher(pioche, index);
     tuile.id = -2; // Valeur de l'id tant que la tuile n'est pas placée (permet l'affichage de la tuile car -1 bloque l'affichage)
-    afficher_tuile(tuile);
+    // afficher_tuile(tuile);
     
     // Manipulation tuile
     int mode = -1; // -1: debug, 0: se deplacer dans grille, 1: manipuler tuile

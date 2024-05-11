@@ -1,6 +1,8 @@
 #ifndef GAME_STRUCTURES
 #define GAME_STRUCTURES
 
+#define G 143
+
 struct coords{
     int x;
     int y;
@@ -29,7 +31,7 @@ struct tuile_s{
 };
 
 // Fonctions dans moteur_jeu.c
-void init_grille(struct tuile_s grille[72][72]);
+void init_grille(struct tuile_s grille[G][G]);
 void init_tuiles_placees(struct tuile_s tuiles_placees[72]);
 void init_joueur(struct joueur j, int id, int ia);
 

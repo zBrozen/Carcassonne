@@ -9,13 +9,13 @@
 
 // Token Github: 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
 
-#define G 72 // Taille de la grille
+#define G 143 // Taille de la grille
 
 struct tuile_s pioche[72];
 struct tuile_s tuiles_placees[72];
 struct tuile_s grille[G][G];
 
-void init_grille(struct tuile_s grille[72][72]){
+void init_grille(struct tuile_s grille[G][G]){
     for(int i = 0; i < G; i++){
         for(int j = 0; j < G; j++){
             grille[i][j].id = -1;
@@ -47,15 +47,15 @@ int main(int argc, char * argv[])
     // afficher_tuile(pioche[i]);
 
     // Debug affichage grille avec tuile
-    grille[3][3].id = pioche[0].id;
-    grille[3][3].cotes[0] = pioche[0].cotes[0];
-    grille[3][3].cotes[1] = pioche[0].cotes[1];
-    grille[3][3].cotes[2] = pioche[0].cotes[2];
-    grille[3][3].cotes[3] = pioche[0].cotes[3];
-    grille[3][3].centre = pioche[0].centre;
+    grille[71][71].id = pioche[0].id;
+    grille[71][71].cotes[0] = pioche[0].cotes[0];
+    grille[71][71].cotes[1] = pioche[0].cotes[1];
+    grille[71][71].cotes[2] = pioche[0].cotes[2];
+    grille[71][71].cotes[3] = pioche[0].cotes[3];
+    grille[71][71].centre = pioche[0].centre;
 
-    grille[3][3].c.x = 3;
-    grille[3][3].c.y = 3;
+    grille[71][71].c.x = 71;
+    grille[71][71].c.y = 71;
 
     struct joueur j1;
     init_joueur(j1, 0, 0);
@@ -66,8 +66,8 @@ int main(int argc, char * argv[])
     tuiles_placees[0].cotes[2] = pioche[0].cotes[2];
     tuiles_placees[0].cotes[3] = pioche[0].cotes[3];
     tuiles_placees[0].centre = pioche[0].centre;
-    tuiles_placees[0].c.x = 3;
-    tuiles_placees[0].c.y = 3;
+    tuiles_placees[0].c.x = 71;
+    tuiles_placees[0].c.y = 71;
 
     int index_pioche = 1;
     while(index_pioche < 72){

@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define G 143 // Taille de la grille
 #define N 8 // Taille de l'affichage de la grille
 
-int recherche_tuile(struct tuile_s grille[72][72], int lig, int dx){
+int recherche_tuile(struct tuile_s grille[G][G], int lig, int dx){
     /* Permet de faire le cas de ligne vide:
     Prend en paramètres la grille, la ligne à étudier, et la valeurs de départ de la colonne 
     (pour éviter de check toute la ligne) */
@@ -38,12 +39,12 @@ void afficher_tuile(struct tuile_s t){
     printf("\n\n");
 }
 
-void affichage(struct tuile_s grille[72][72], int dx, int dy){
-    /* Affiche la grille qui affichera un terrain 72x72.
-    L'affichage ne montrera qu'un segment du terrain qui sera de taille 16x16 
+void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile){
+    /* Affiche la grille qui affichera un terrain de taille 143x143.
+    L'affichage ne montrera qu'un segment du terrain qui sera de taille 8x8 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
 
-    system("clear");
+    // system("clear");
     
     printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){
@@ -66,6 +67,13 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
                 }
                 else printf("   ");
             }
+
+            // Affichage tête de la tuile à droite
+            if(lig == dy+1){
+                // Espacement avec la grille + affichage tête
+                printf("   \t%c", tuile.cotes[1]);
+            }
+
             // Axe y
             if(lig/10 >= 1) printf("\n%d", lig);
             else printf("\n %d", lig);
@@ -82,6 +90,12 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
                 else printf("   ");
             }
 
+            // Affichage corps de la tuile à droite
+            if(lig == dy+1){
+                // Espacement avec la grille + affichage corps
+                printf("   %c\t%c\t%c", tuile.cotes[0], tuile.centre, tuile.cotes[2]);
+            }
+
             // Pied de tuile(s)
             printf("\n     ");
             for(int col = dx; col < dx+N; col++){
@@ -91,13 +105,41 @@ void affichage(struct tuile_s grille[72][72], int dx, int dy){
                 } 
                 else printf("   ");
             }
+
+            // Affichage pied de la tuile à droite
+            if(lig == dy+1){
+                // Espacement avec la grille + affichage pied
+                printf("   \t%c", tuile.cotes[3]);
+            }
         }
         else{
-        // Def coords axes y
-        if(lig/10 >= 1) printf("\n%d", lig);
-        else printf("\n %d", lig);
-        printf("\n");
+            // Affichage tête de la tuile à droite
+            if(lig == dy+1){
+                // Espacement avec la grille + affichage tête
+                printf("\t\t\t\t");
+                printf("   \t%c", tuile.cotes[1]);
+            }
+            
+            // Def coords axes y
+            if(lig/10 >= 1) printf("\n%d", lig);
+            else printf("\n %d", lig);
+
+            // Affichage corps de la tuile à droite
+            if(lig == dy+1){
+                printf("\t\t\t       ");
+                // Espacement avec la grille + affichage corps
+                printf("%c\t%c\t%c", tuile.cotes[0], tuile.centre, tuile.cotes[2]);
+            }
+            
+            printf("\n");
+
+            // Affichage pied de la tuile à droite
+            if(lig == dy+1){
+                printf("\t\t\t\t");
+                // Espacement avec la grille + affichage pied
+                printf("   \t%c", tuile.cotes[3]);
+            }
         }
     }
-    printf("\n\n");
+    // printf("\n\n");
 }
