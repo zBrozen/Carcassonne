@@ -380,12 +380,6 @@ void previsu(struct tuile_s grille[G][G], struct tuile_s tuile, struct coords li
     // Ajout de la tuile prévisualisée dans la grille (la tuile est fausse)
     add_gr(grille, tuile_copie, x, y);
 
-    // Definit l'affichage de la grille selon les coordonnées
-    int taille_x = x-(N/2)+1; int taille_y = y-(N/2)+1;
-    if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
-    if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
-    affichage(grille, taille_x, taille_y, tuile);
-    // afficher_tuile(tuile);
 }
 
 void free_liste(struct coords * c){
@@ -425,12 +419,18 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
     // Condition qui vérifie si il y a bien des tuiles dans la liste des placements (sinon anormal)
     if(taille_liste != 0){
 
-        previsu(grille, tuile, liste_placements, e);
         // Choix du joueur
         char c = 'x'; // Variable de choix de placement
+        int y = liste_placements[e].y, x = liste_placements[e].y;
+        int taille_x = x-(N/2)+1; int taille_y = y-(N/2)+1;
+        if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
+        if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+
+        previsu(grille, tuile, liste_placements, e);
         while(c != 'v'){ // v pour valider
+            affichage(grille, taille_x, taille_y, tuile);
             printf("\nDebug e = %d et taille liste = %d id tuile = %d\n", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id);
-            printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement): ");
+            printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement, d: visualisation de la grille): ");
             scanf("%c", &c);
             clearBuffer();
             // fflush(stdin);
@@ -441,11 +441,23 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     if(e == 0) e = taille_liste-1;
                     else e = (e - 1) % taille_liste;
                     previsu(grille, tuile, liste_placements, e);
+                    y = liste_placements[e].y, x = liste_placements[e].y;
+                    taille_x = x-(N/2)-2; taille_y = y-(N/2)-1;
+                    if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
+                    if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+                    affichage(grille, taille_x, taille_y, tuile);
+     
                     break;
                 case 'e':
                     rem_gr(grille, liste_placements[e].x, liste_placements[e].y);
                     e = (e + 1) % taille_liste;
                     previsu(grille, tuile, liste_placements, e);
+                    y = liste_placements[e].y, x = liste_placements[e].y;
+                    taille_x = x-(N/2)+1; taille_y = y-(N/2)+1;
+                    if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
+                    if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+                    affichage(grille, taille_x, taille_y, tuile);
+
                     break;
                 case 'v':
                     printf("Placement effectué (id tuile = %d)\n", index);
@@ -458,6 +470,30 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     tuiles_placees[index].centre = grille[liste_placements[e].y][liste_placements[e].x].centre;
                     tuiles_placees[index].c.x = liste_placements[e].x;
                     tuiles_placees[index].c.y = liste_placements[e].y;
+                    break;
+                // Deplacement dans la grille
+                case 'd':
+                    char direction;
+                    affichage(grille, taille_x, taille_y, tuile);
+                    printf("Entrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\nDéplacement: ");
+                    scanf("%c", &direction);
+                    clearBuffer();
+                    if(direction == 'q') taille_x--;
+                    if(direction == 'z') taille_y--;
+                    if(direction == 'd') taille_x++;
+                    if(direction == 's') taille_y++;
+
+                    while(direction != 'x'){
+                        affichage(grille, taille_x, taille_y, tuile);
+                        printf("\n1Entrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\n1Déplacement: ");
+                        scanf("%c", &direction);
+                        clearBuffer();
+                        printf("\n");
+                        if(direction == 'q') taille_x--;
+                        if(direction == 'z') taille_y--;
+                        if(direction == 'd') taille_x++;
+                        if(direction == 's') taille_y++;
+                    }
                     break;
                 default:
                     previsu(grille, tuile, liste_placements, e);
