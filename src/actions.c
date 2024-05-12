@@ -116,11 +116,8 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
         liste[i].y = -1;
     }
 
+    // Init de tuile copie pour definir le nombre de rotation a faire
     struct tuile_s tuile_copie;
-    tuile_copie.cotes[0] = tuile.cotes[0];
-    tuile_copie.cotes[1] = tuile.cotes[1];
-    tuile_copie.cotes[2] = tuile.cotes[2];
-    tuile_copie.cotes[3] = tuile.cotes[3];
 
     // Index sert à parcourir la liste, et t le tableau "tuiles_placees" pris en paramètre
     int index = 0, t;
@@ -135,19 +132,16 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
         // printf("Verif pour %c:\n", tuile.cotes[c]);
         while(c < 4){
             // printf("test ??\n");
+            
             // Def de ok qui compte la tuile comme compatible et qui permettra d'ajouter des placements
             ok = 1;
-
             // Condition vérifiant la compatibilité entre les cotes des tuiles (verif si egal, si v alors == b et inverse)
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[0] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[0] == 'v'))
             || tuile.cotes[c] == tuiles_placees[t].cotes[0]) && (tuiles_placees[t].c.x - 1) >= 0
             && grille[tuiles_placees[t].c.y][tuiles_placees[t].c.x - 1].id == -1){
-                // Init de tuile copie pour definir le nombre de rotation a faire
-                tuile_copie.cotes[0] = tuile.cotes[0];
-                tuile_copie.cotes[1] = tuile.cotes[1];
-                tuile_copie.cotes[2] = tuile.cotes[2];
-                tuile_copie.cotes[3] = tuile.cotes[3];
 
+                // Remet les paramètres initiaux de la tuile (tuile_copie peut subir des changements donc faut l'initialiser pour chaque côté vérifié)
+                tuile_copie = copie(tuile);
 
                 // Seconde verif pour chaque cotes de la tuile piochee, a comparer avec les potentielles tuiles alentours
 
@@ -161,7 +155,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                 // Verif de la compa autour du placement de la nouvelle tuile (donc on utilise la position de tuile placee)
                 int y = tuiles_placees[t].c.y, x = tuiles_placees[t].c.x - 1;
                 
-                if(y+1 < 72 && grille[y+1][x].id != -1){
+                if(y+1 < G && grille[y+1][x].id != -1){
                     if(!((tuile_copie.cotes[3] == 'v' && grille[y+1][x].cotes[1] == 'b') || (tuile_copie.cotes[3] == 'b' && grille[y+1][x].cotes[1] == 'v'))
                         && tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
                         ok = 0;
@@ -192,13 +186,11 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
 
             ok = 1;
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[1] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[1] == 'v'))
-            || tuile.cotes[c] == tuiles_placees[t].cotes[1]) && (tuiles_placees[t].c.y - 1) >= 0 
-            && grille[tuiles_placees[t].c.y - 1][tuiles_placees[t].c.x].id == -1){
-                // Init de tuile copie pour definir le nombre de rotation a faire
-                tuile_copie.cotes[0] = tuile.cotes[0];
-                tuile_copie.cotes[1] = tuile.cotes[1];
-                tuile_copie.cotes[2] = tuile.cotes[2];
-                tuile_copie.cotes[3] = tuile.cotes[3];
+            || tuile.cotes[c] == tuiles_placees[t].cotes[1]) 
+            && (tuiles_placees[t].c.y - 1) >= 0 && grille[tuiles_placees[t].c.y - 1][tuiles_placees[t].c.x].id == -1){
+
+                // Remet les paramètres initiaux de la tuile (tuile_copie peut subir des changements donc faut l'initialiser pour chaque côté vérifié)
+                tuile_copie = copie(tuile);
 
                 // Seconde verif pour chaque cotes de la tuile piochee, a comparer avec les potentielles tuiles alentours
                 
@@ -210,7 +202,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                 }
                 int y = tuiles_placees[t].c.y - 1, x = tuiles_placees[t].c.x;
                 
-                if(x+1 < 72 && grille[y][x+1].id != -1){
+                if(x+1 < G && grille[y][x+1].id != -1){
                     if(!((tuile_copie.cotes[2] == 'v' && grille[y][x+1].cotes[0] == 'b') || (tuile_copie.cotes[2] == 'b' && grille[y][x+1].cotes[0] == 'v'))
                         && tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
                         ok = 0;
@@ -244,13 +236,10 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[2] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[2] == 'v')) 
             || tuile.cotes[c] == tuiles_placees[t].cotes[2]) && (tuiles_placees[t].c.x + 1) < 143 
             && grille[tuiles_placees[t].c.y][tuiles_placees[t].c.x + 1].id == -1){
-                // printf("valide 2");
-                // Init de tuile copie pour definir le nombre de rotation a faire
-                tuile_copie.cotes[0] = tuile.cotes[0];
-                tuile_copie.cotes[1] = tuile.cotes[1];
-                tuile_copie.cotes[2] = tuile.cotes[2];
-                tuile_copie.cotes[3] = tuile.cotes[3];
                 
+                // Remet les paramètres initiaux de la tuile (tuile_copie peut subir des changements donc faut l'initialiser pour chaque côté vérifié)
+                tuile_copie = copie(tuile);
+
                 // Seconde verif pour chaque cotes de la tuile piochee, a comparer avec les potentielles tuiles alentours
                 
                 c2 = c, nb_rota = 0;
@@ -261,7 +250,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                 }
                 int y = tuiles_placees[t].c.y, x = tuiles_placees[t].c.x + 1;
                 
-                if(y+1 < 72 && grille[y+1][x].id != -1){
+                if(y+1 < G && grille[y+1][x].id != -1){
                     // printf("bizarre0\n");
                     if(!((tuile_copie.cotes[3] == 'v' && grille[y+1][x].cotes[1] == 'b') || (tuile_copie.cotes[3] == 'b' && grille[y+1][x].cotes[1] == 'v'))
                         && tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
@@ -269,7 +258,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                         ok = 0;
                     }
                 }
-                if(x+1 < 72 && grille[y][x+1].id != -1){
+                if(x+1 < G && grille[y][x+1].id != -1){
                     // printf("bizarre2\n");
                     if(!((tuile_copie.cotes[2] == 'v' && grille[y][x+1].cotes[0] == 'b') || (tuile_copie.cotes[2] == 'b' && grille[y][x+1].cotes[0] == 'v'))
                         && tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
@@ -301,13 +290,10 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
             if((((tuile.cotes[c] == 'v' && tuiles_placees[t].cotes[3] == 'b') || (tuile.cotes[c] == 'b' && tuiles_placees[t].cotes[3] == 'v'))
             || tuile.cotes[c] == tuiles_placees[t].cotes[3]) && (tuiles_placees[t].c.y + 1) < 143 
             && grille[tuiles_placees[t].c.y + 1][tuiles_placees[t].c.x].id == -1){
-                // printf("valide 3");
-                // Init de tuile copie pour definir le nombre de rotation a faire
-                tuile_copie.cotes[0] = tuile.cotes[0];
-                tuile_copie.cotes[1] = tuile.cotes[1];
-                tuile_copie.cotes[2] = tuile.cotes[2];
-                tuile_copie.cotes[3] = tuile.cotes[3];
                 
+                // Remet les paramètres initiaux de la tuile (tuile_copie peut subir des changements donc faut l'initialiser pour chaque côté vérifié)
+                tuile_copie = copie(tuile);
+
                 // Seconde verif pour chaque cotes de la tuile piochee, a comparer avec les potentielles tuiles alentours
                 
                 c2 = c, nb_rota = 0;
@@ -318,7 +304,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                 }
                 int y = tuiles_placees[t].c.y + 1, x = tuiles_placees[t].c.x;
                 
-                if(y+1 < 72 && grille[y+1][x].id != -1){
+                if(y+1 < G && grille[y+1][x].id != -1){
                     // printf("bizarre0\n");
                     if(!((tuile_copie.cotes[3] == 'v' && grille[y+1][x].cotes[1] == 'b') || (tuile_copie.cotes[3] == 'b' && grille[y+1][x].cotes[1] == 'v'))
                         && tuile_copie.cotes[3] != grille[y+1][x].cotes[1]){
@@ -326,7 +312,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
                         ok = 0;
                     }
                 }
-                if(x+1 < 72 && grille[y][x+1].id != -1){
+                if(x+1 < G && grille[y][x+1].id != -1){
                     // printf("bizarre2\n");
                     if(!((tuile_copie.cotes[2] == 'v' && grille[y][x+1].cotes[3] == 'b') || (tuile_copie.cotes[1] == 'b' && grille[y][x+1].cotes[3] == 'v'))
                         && tuile_copie.cotes[2] != grille[y][x+1].cotes[0]){
@@ -368,6 +354,8 @@ void add_gr(struct tuile_s grille[G][G], struct tuile_s tuile, int x, int y){
     grille[y][x].cotes[2] = tuile.cotes[2];
     grille[y][x].cotes[3] = tuile.cotes[3];
     grille[y][x].centre = tuile.centre;
+    grille[y][x].c.y = y;
+    grille[y][x].c.x = x;
 }
 
 void rem_gr(struct tuile_s grille[G][G], int x, int y){
@@ -380,11 +368,7 @@ void previsu(struct tuile_s grille[G][G], struct tuile_s tuile, struct coords li
     // Init tuile copie qui permet de concerver la config initiale de tuile afin d'assurer que les asserts lors de la rotation soient justes
     struct tuile_s tuile_copie;
     tuile_copie.id = -2;
-    tuile_copie.cotes[0] = tuile.cotes[0];
-    tuile_copie.cotes[1] = tuile.cotes[1];
-    tuile_copie.cotes[2] = tuile.cotes[2];
-    tuile_copie.cotes[3] = tuile.cotes[3];
-    tuile_copie.centre = tuile.centre;
+    tuile_copie = copie(tuile);
 
     // Modif tuile
     int x = liste_placements[l_index].x, y = liste_placements[l_index].y;
@@ -397,7 +381,7 @@ void previsu(struct tuile_s grille[G][G], struct tuile_s tuile, struct coords li
     add_gr(grille, tuile_copie, x, y);
 
     // Definit l'affichage de la grille selon les coordonnées
-    int taille_x = x-(N/2); int taille_y = y-(N/2);
+    int taille_x = x-(N/2)+1; int taille_y = y-(N/2)+1;
     if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
     affichage(grille, taille_x, taille_y, tuile);
@@ -415,6 +399,7 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
     // Pioche de tuile
     struct tuile_s tuile;
     tuile = piocher(pioche, index);
+
     tuile.id = -2; // Valeur de l'id tant que la tuile n'est pas placée (permet l'affichage de la tuile car -1 bloque l'affichage)
     // afficher_tuile(tuile);
     
@@ -479,6 +464,26 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     printf("\e[41mErreur: veuillez rentrer une valeur parmis cette liste [a,e,v]\e[0m\n");
                     break;
             }
+        }
+
+        printf("ALLO 4 ???\n");
+        printf("Coordonnées de la tuile sur la grille: y: %d x: %d\nCoordonnées de la tuile dans tuile placées: y: %d x: %d\n", grille[tuiles_placees[index].c.y][tuiles_placees[index].c.y].c.y, grille[tuiles_placees[index].c.y][tuiles_placees[index].c.x].c.x, 
+        tuiles_placees[index].c.y, tuiles_placees[index].c.x);
+
+        // Vérification de l'avancée des structures
+        for(int i = 0; i < 4; i++){
+            int res;
+            if(tuiles_placees[index].cotes[i] != 'p'){
+                res = parcours_structure(grille, tuiles_placees[index], tuiles_placees[index].cotes[i], i);
+                if(res == 1){
+                    // Cas où la structure est ouverte (non complétée)
+                    lock_structure(grille, tuiles_placees);
+                }
+                // Reset parcours
+                reset_traitee(grille, tuiles_placees);
+                printf("\e[41mResultat de la vérif de la structure %c: %d\e[0m\n", tuiles_placees[index].cotes[i], res);
+            }
+            else printf("\n\e[42mCas de pre non pris en compte\e[0m\n");
         }
     }
     else{
