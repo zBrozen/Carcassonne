@@ -386,7 +386,7 @@ void free_liste(struct coords * c){
     free(c);
 }
 
-int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int index){
+int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int index, int nb_joueurs, int joueur_actuel){
     /*Effectue un tour pour un certain joueur (ne se lance que si index < 72)
     Le paramètre "index" indique les tuiles restantes dans la pioche artificiellement (car je ne fais que avancer dans la pioche sans retirer les tuiles)*/
     
@@ -396,9 +396,6 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
 
     tuile.id = -2; // Valeur de l'id tant que la tuile n'est pas placée (permet l'affichage de la tuile car -1 bloque l'affichage)
     // afficher_tuile(tuile);
-    
-    // Manipulation tuile
-    int mode = -1; // -1: debug, 0: se deplacer dans grille, 1: manipuler tuile
 
     // Def liste compa pour définir les différents placements possible avec la tuile piochée
     struct coords * liste_placements;
@@ -422,14 +419,21 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
         // Choix du joueur
         char c = 'x'; // Variable de choix de placement
         int y = liste_placements[e].y, x = liste_placements[e].y;
-        int taille_x = x-(N/2)+1; int taille_y = y-(N/2)+1;
+        int taille_x = x-(N/2); int taille_y = y-(N/2);
         if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
         if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
 
         previsu(grille, tuile, liste_placements, e);
         while(c != 'v'){ // v pour valider
+            y = liste_placements[e].y, x = liste_placements[e].x;
+            taille_x = x-(N/2); taille_y = y-(N/2);
+            if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
+            if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+            if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
+            if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
             affichage(grille, taille_x, taille_y, tuile);
-            printf("\nDebug e = %d et taille liste = %d id tuile = %d\n", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id);
+            printf("\nDebug e = %d et taille liste = %d id tuile = %d\nDebug coords: x->%d et y->%d taille_x->%d et taille_y->%d", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id, 
+            liste_placements[e].x, liste_placements[e].y, taille_x, taille_y);
             printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement, d: visualisation de la grille): ");
             scanf("%c", &c);
             clearBuffer();
@@ -441,10 +445,12 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     if(e == 0) e = taille_liste-1;
                     else e = (e - 1) % taille_liste;
                     previsu(grille, tuile, liste_placements, e);
-                    y = liste_placements[e].y, x = liste_placements[e].y;
-                    taille_x = x-(N/2)-2; taille_y = y-(N/2)-1;
+                    y = liste_placements[e].y, x = liste_placements[e].x;
+                    taille_x = x - (N/2); taille_y = y - (N/2);
                     if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
                     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+                    if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
+                    if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
                     affichage(grille, taille_x, taille_y, tuile);
      
                     break;
@@ -452,10 +458,12 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     rem_gr(grille, liste_placements[e].x, liste_placements[e].y);
                     e = (e + 1) % taille_liste;
                     previsu(grille, tuile, liste_placements, e);
-                    y = liste_placements[e].y, x = liste_placements[e].y;
-                    taille_x = x-(N/2)+1; taille_y = y-(N/2)+1;
+                    y = liste_placements[e].y, x = liste_placements[e].x;
+                    taille_x = x - (N/2); taille_y = y - (N/2);
                     if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
                     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
+                    if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
+                    if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
                     affichage(grille, taille_x, taille_y, tuile);
 
                     break;
@@ -470,6 +478,8 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
                     tuiles_placees[index].centre = grille[liste_placements[e].y][liste_placements[e].x].centre;
                     tuiles_placees[index].c.x = liste_placements[e].x;
                     tuiles_placees[index].c.y = liste_placements[e].y;
+                    // Init les valeurs par défaut des meeples
+                    grille[liste_placements[e].y][liste_placements[e].x].m.id = -1;
                     break;
                 // Deplacement dans la grille
                 case 'd':
@@ -507,37 +517,137 @@ int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G]
         tuiles_placees[index].c.y, tuiles_placees[index].c.x);
 
         // Vérification de l'avancée des structures
-        for(int i = 0; i < 4; i++){
-            int res;
-            if(tuiles_placees[index].cotes[i] != 'p'){
-                res = parcours_structure(grille, tuiles_placees[index], tuiles_placees[index].cotes[i], i);
+        int pion[5] = {0, 0, 0, 0, 0}; // Le nombre de pion d'un joueur sur une structure
+        printf("WTF %d\n", pion[0]);
+        int emplacement_pion[5] = {0, 0, 0, 0, 0}; // Liste des emplacements dispo avec 1 (o, n, e, s, c)
+
+        // Verif abbaye
+        if(tuiles_placees[index].centre == 'a'){
+            emplacement_pion[4] = 1;
+        }
+
+        for(int structure = 0; structure < 4; structure++){
+            int res, score = 1;
+            if(tuiles_placees[index].cotes[structure] != 'p'){
+                res = parcours_structure(grille, tuiles_placees[index], tuiles_placees[index].cotes[structure], structure, &score, pion);
+                printf("STOP PARCOURS (petit debug tuile de départ %d)\n", tuiles_placees[0].m.id);
+                // Donne le plus grand nombre de pion posés
+                printf("DEBUG: AVANT init maxi pion %d\n", pion[0]);
+                int maxi_pion = pion[0];
+                printf("DEBUG: init maxi pion %d\n", maxi_pion);
+                // Def maxi_pion
+                for(int joueur = 1; joueur < nb_joueurs; joueur++){
+                    if (maxi_pion < pion[joueur]){
+                        maxi_pion = pion[joueur];
+                        printf("DEBUG: BIZARRE %d\n", maxi_pion);
+                    }
+                }
+                printf("DEBUG MAXI PION SIL VOUS PLEASE : %d\n", maxi_pion);
                 if(res == 1){
+                    printf("Bien rentré dans le if\n");
                     // Cas où la structure est ouverte (non complétée)
                     lock_structure(grille, tuiles_placees);
+                    // Si un joueur a un nombre de pion = à maxi_pion, rajoute le score
+                    if(res == 1){
+                        if(maxi_pion != 0){
+                            for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                                if(pion[joueur] == maxi_pion){
+                                    j[joueur].score += score;
+                                }
+                            }
+                        }
+                    }
+
+                }
+                
+                
+                // Vérifie si aucun pion
+                if(maxi_pion == 0){
+                    emplacement_pion[structure] = 1;
+                    printf("DEBUG Emplacement pion: %d, structure: %d", emplacement_pion[structure], structure);
                 }
                 // Reset parcours
                 reset_traitee(grille, tuiles_placees);
-                printf("\e[41mResultat de la vérif de la structure %c: %d\e[0m\n", tuiles_placees[index].cotes[i], res);
+                printf("\e[41mResultat de la vérif de la structure %c: %d et score actuel du parcours : %d\e[0m\n", tuiles_placees[index].cotes[structure], res, score);
             }
             else printf("\n\e[42mCas de pre non pris en compte\e[0m\n");
         }
+
+        // Choix du joueur pour placer des pions
+        // Détermine si il y a au moins un emplacement libre
+        printf("OK ??\n");
+        int cond_placement = 0;
+        for(int p = 0; p < 5; p++){
+            if(emplacement_pion[p] != 0){
+                cond_placement = 1;
+                printf("FEUR\n");
+            } 
+        }
+
+
+        // Détermine si le joueur possède au moins un pion et si oui, le propose de le placer
+        if (cond_placement == 1 && j[joueur_actuel].nbm > 0){
+            char pose;
+            printf("Voulez vous poser un pion ? (O/N) ");
+            do {
+                scanf("%c", &pose);
+                clearBuffer();
+                printf("\n");
+            }
+            while(pose != 'O' && pose != 'N');
+            printf("Quitter l'autoroute !\n");
+            if(pose == 'O'){
+                // Def l'id du pion
+                grille[liste_placements[e].y][liste_placements[e].x].m.id = joueur_actuel;
+                // Def la variable de la position du pion
+                int p = 0;
+                char choix;
+                // Place le pion uniquement a l'endre disponible le plus proche
+                while(emplacement_pion[p] == 0) p = (p + 1)%5;
+                // Place le pion
+                grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
+                affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
+                do {
+                    printf("DEBUG 2 Emplacement_pion: %d, structure %d\n", emplacement_pion[p], p);
+                    scanf("%c", &choix);
+                    clearBuffer();
+                    if(choix == 'a'){
+                        printf("a selectionné\n");
+                        p--;
+                        while(emplacement_pion[p] == 0){
+                            if(p <= 0) p = 4;
+                            else p = (p - 1);
+                        }
+                        // Place le pion 
+                        grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
+                        affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                        printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
+                    }
+
+                    if(choix == 'e'){
+                        p++;
+                        while(emplacement_pion[p] == 0){
+                            p = (p + 1)%5;
+                        } 
+                        // Place le pion
+                        grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
+                        affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                        printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
+                    }
+                }
+                while(choix != 'v');
+                printf("Pion placée !\n");
+            }
+        }
+
     }
     else{
-        printf("Erreur: liste placement vide\n");
+        printf("\e[43mRepioche car aucun emplacement trouvé\e[0m\n");
     }
 
-    // Placement de meeple
-
     // Debug de tout les placements possible en un seul affichage
-    // for(int e = 0; e < 72 && liste_placements[e].x != -1; e++)
-    //     previsu(grille, tuile, liste_placements, e);
     
-    // Debug liste
-    // int i = 0;
-    // while(i < 72 && liste_placements[i].x != -1){
-    //     printf("%d: x%d, y%d, r%d\n", i, liste_placements[i].x, liste_placements[i].y, liste_placements[i].rota);
-    //     i++;
-    // }
 
     index++;
     printf("\nDebug tuiles_placees:\n");

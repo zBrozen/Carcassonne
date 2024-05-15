@@ -45,11 +45,17 @@ void lock_structure(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[7
     }
 }
 
-int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle, char structure, int position){
+int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle, char structure, int position, int * score, int * pion){
     /* Fonction qui effectue un parcours récursif dans une structure.
     Grille permet de naviguer en définissant la tuile suivante ; On précise la structure qu'on explore, et la position dans une tuile (0..5) */
 
     printf("\nDebut de la fonction: tuile: %d, position: %d\n", tuile_actuelle.id, position);
+
+    // Verif pion
+    if(tuile_actuelle.m.id != -1 && tuile_actuelle.m.cotes == position){
+        printf("\e[45mPion trouvé ! Utilisateur : %d\e[0m\n", tuile_actuelle.m.id);
+        pion[tuile_actuelle.m.id]++;
+    }
 
     // Variables qui définit si la structure est ouverte ou non
     int res_centre = 0, res0 = 0, res1 = 0, res2 = 0, res3 = 0;
@@ -69,7 +75,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
             if(tuile_actuelle.centre == structure ||
             (tuile_actuelle.centre == 'b' && structure == 'v')){
                 printf("Centre1 ok\n");
-                res_centre = parcours_structure(grille, tuile_actuelle, structure, 4);
+                res_centre = parcours_structure(grille, tuile_actuelle, structure, 4, score, pion);
             }
             // Cul de sac pour ville
             if((tuile_actuelle.cotes[position] == 'v' ||
@@ -98,7 +104,8 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 if(tuile_actuelle.c.x - 1 >= 0 && grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].id != -1){
                     if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].traitee[2] == 0){
                         printf("case 0\n");
-                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1], structure, 2);
+                        (*score)++;
+                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1], structure, 2, score, pion);
                     }
                     // Cas où la case est traitee
                     else{
@@ -115,7 +122,8 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 if(tuile_actuelle.c.y - 1 >= 0 && grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].id != -1){
                     if(grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].traitee[3] == 0){
                         printf("case 1\n");
-                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x], structure, 3);
+                        (*score)++;
+                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x], structure, 3, score, pion);
                     }
                     // Cas où la case est traitee
                     else{
@@ -132,7 +140,8 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 if(tuile_actuelle.c.x + 1 < G && grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].id != -1){
                     if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].traitee[0] == 0){
                         printf("case 2\n");
-                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1], structure, 0);
+                        (*score)++;
+                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1], structure, 0, score, pion);
                     }
                     // Cas où la case est traitee
                     else{
@@ -149,7 +158,8 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 if(tuile_actuelle.c.y + 1 < G && grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].id != -1){
                     if(grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].traitee[1] == 0){
                         printf("case 3\n");
-                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x], structure, 1);
+                        (*score)++;
+                        res0 = parcours_structure(grille, grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x], structure, 1, score, pion);
                     }
                     // Cas où la case est traitee
                     else{
@@ -178,25 +188,25 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
         (tuile_actuelle.cotes[0] == structure ||
         (tuile_actuelle.cotes[0] == 'b' && structure == 'v'))){
             printf("bord gauche\n");
-            res0 = parcours_structure(grille, tuile_actuelle, structure, 0);
+            res0 = parcours_structure(grille, tuile_actuelle, structure, 0, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1] == 0 &&
         (tuile_actuelle.cotes[1] == structure ||
         (tuile_actuelle.cotes[1] == 'b' && structure == 'v'))){
             printf("bord haut\n");
-            res1 = parcours_structure(grille, tuile_actuelle, structure, 1);
+            res1 = parcours_structure(grille, tuile_actuelle, structure, 1, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2] == 0 &&
         (tuile_actuelle.cotes[2] == structure ||
         (tuile_actuelle.cotes[2] == 'b' && structure == 'v'))){
             printf("bord droit\n");
-            res2 = parcours_structure(grille, tuile_actuelle, structure, 2);
+            res2 = parcours_structure(grille, tuile_actuelle, structure, 2, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3] == 0 &&
         (tuile_actuelle.cotes[3] == structure ||
         (tuile_actuelle.cotes[3] == 'b' && structure == 'v'))){
             printf("bord bas\n");
-            res3 = parcours_structure(grille, tuile_actuelle, structure, 3);
+            res3 = parcours_structure(grille, tuile_actuelle, structure, 3, score, pion);
         }
 
         // Parcours fermé

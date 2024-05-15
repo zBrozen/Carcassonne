@@ -25,6 +25,6 @@ void previsu(struct tuile_s grille[G][G], struct tuile_s tuile, struct coords li
 
 void free_liste(struct coords * c);
 
-int tour(struct joueur j, struct tuile_s pioche[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int index);
+int tour(struct joueur * j, struct tuile_s pioche[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int index, int nb_joueurs, int joueur_actuel);
 
 #endif // ACTION
