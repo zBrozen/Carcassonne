@@ -431,7 +431,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
             if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
             if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
             if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
-            affichage(grille, taille_x, taille_y, tuile);
+            affichage(grille, taille_x, taille_y, tuile, joueur_actuel);
             printf("\nDebug e = %d et taille liste = %d id tuile = %d\nDebug coords: x->%d et y->%d taille_x->%d et taille_y->%d", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id, 
             liste_placements[e].x, liste_placements[e].y, taille_x, taille_y);
             printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement, d: visualisation de la grille): ");
@@ -451,7 +451,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
                     if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
                     if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
-                    affichage(grille, taille_x, taille_y, tuile);
+                    affichage(grille, taille_x, taille_y, tuile, joueur_actuel);
      
                     break;
                 case 'e':
@@ -464,7 +464,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                     if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
                     if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
                     if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
-                    affichage(grille, taille_x, taille_y, tuile);
+                    affichage(grille, taille_x, taille_y, tuile, joueur_actuel);
 
                     break;
                 case 'v':
@@ -484,7 +484,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 // Deplacement dans la grille
                 case 'd':
                     char direction;
-                    affichage(grille, taille_x, taille_y, tuile);
+                    affichage(grille, taille_x, taille_y, tuile, joueur_actuel);
                     printf("Entrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\nDéplacement: ");
                     scanf("%c", &direction);
                     clearBuffer();
@@ -494,7 +494,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                     if(direction == 's') taille_y++;
 
                     while(direction != 'x'){
-                        affichage(grille, taille_x, taille_y, tuile);
+                        affichage(grille, taille_x, taille_y, tuile, joueur_actuel);
                         printf("\n1Entrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\n1Déplacement: ");
                         scanf("%c", &direction);
                         clearBuffer();
@@ -517,9 +517,14 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
         tuiles_placees[index].c.y, tuiles_placees[index].c.x);
 
         // Vérification de l'avancée des structures
-        int pion[5] = {0, 0, 0, 0, 0}; // Le nombre de pion d'un joueur sur une structure
+        int info_structure_pion[4][5]; // Contient les info pour chaque structure, des pions (des joueurs) présents sur les parcours
+        int info_structure_score[4] = {0, 0, 0, 0}; // Contient le score potentiel pour chaque côté de la tuile
+        int info_structure_res[4] = {0, 0, 0, 0}; // Stocke les différents res
+        printf("DEBUG 713 %d", info_structure_res[0]);
+        int pion[5] = {0, 0, 0, 0}; // Le nombre de pion d'un joueur sur une structure
         printf("WTF %d\n", pion[0]);
         int emplacement_pion[5] = {0, 0, 0, 0, 0}; // Liste des emplacements dispo avec 1 (o, n, e, s, c)
+        int liste_maxi_pion[4] = {0, 0, 0, 0};
 
         // Verif abbaye
         if(tuiles_placees[index].centre == 'a'){
@@ -527,37 +532,32 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
         }
 
         for(int structure = 0; structure < 4; structure++){
-            int res, score = 1;
+            int score = 1;
             if(tuiles_placees[index].cotes[structure] != 'p'){
-                res = parcours_structure(grille, tuiles_placees[index], tuiles_placees[index].cotes[structure], structure, &score, pion);
+                // Init nb_pion par joueur sur structure
+                for(int i = 0; i < 5; i++) pion[i] = 0;
+                
+                // Init des différentes valeurs
+                info_structure_res[structure] = parcours_structure(grille, tuiles_placees[index], tuiles_placees[index].cotes[structure], structure, &score, pion);
+                info_structure_score[structure] = score;
                 printf("STOP PARCOURS (petit debug tuile de départ %d)\n", tuiles_placees[0].m.id);
-                // Donne le plus grand nombre de pion posés
+                // Donne le plus grand nombre de pion posés par un ou plusieurs joueurs
                 printf("DEBUG: AVANT init maxi pion %d\n", pion[0]);
-                int maxi_pion = pion[0];
+                int maxi_pion = 0;
                 printf("DEBUG: init maxi pion %d\n", maxi_pion);
                 // Def maxi_pion
-                for(int joueur = 1; joueur < nb_joueurs; joueur++){
+                for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                    info_structure_pion[structure][joueur] = pion[joueur];
                     if (maxi_pion < pion[joueur]){
                         maxi_pion = pion[joueur];
-                        printf("DEBUG: BIZARRE %d\n", maxi_pion);
                     }
                 }
+                liste_maxi_pion[structure] = maxi_pion;
                 printf("DEBUG MAXI PION SIL VOUS PLEASE : %d\n", maxi_pion);
-                if(res == 1){
+                if(info_structure_res[structure] == 1){
                     printf("Bien rentré dans le if\n");
-                    // Cas où la structure est ouverte (non complétée)
-                    lock_structure(grille, tuiles_placees);
-                    // Si un joueur a un nombre de pion = à maxi_pion, rajoute le score
-                    if(res == 1){
-                        if(maxi_pion != 0){
-                            for(int joueur = 0; joueur < nb_joueurs; joueur++){
-                                if(pion[joueur] == maxi_pion){
-                                    j[joueur].score += score;
-                                }
-                            }
-                        }
-                    }
-
+                    // Cas où la structure est fermée, lock partiellement la tuile
+                    lock_structure(grille, tuiles_placees, -2);
                 }
                 
                 
@@ -568,7 +568,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 }
                 // Reset parcours
                 reset_traitee(grille, tuiles_placees);
-                printf("\e[41mResultat de la vérif de la structure %c: %d et score actuel du parcours : %d\e[0m\n", tuiles_placees[index].cotes[structure], res, score);
+                printf("\e[41mResultat de la vérif de la structure %c: %d et score actuel du parcours : %d\e[0m\n", tuiles_placees[index].cotes[structure], info_structure_res[structure], score);
             }
             else printf("\n\e[42mCas de pre non pris en compte\e[0m\n");
         }
@@ -606,9 +606,11 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 while(emplacement_pion[p] == 0) p = (p + 1)%5;
                 // Place le pion
                 grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
-                affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                printf("DEBUG GRILLE MEEPLE: structure %d\n", grille[liste_placements[e].y][liste_placements[e].x].m.cotes);
+                affichage(grille, taille_x, taille_y, grille[liste_placements[e].y][liste_placements[e].x], joueur_actuel);
                 printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
                 do {
+                    printf("\n");
                     printf("DEBUG 2 Emplacement_pion: %d, structure %d\n", emplacement_pion[p], p);
                     scanf("%c", &choix);
                     clearBuffer();
@@ -621,32 +623,81 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                         }
                         // Place le pion 
                         grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
-                        affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                        affichage(grille, taille_x, taille_y, grille[liste_placements[e].y][liste_placements[e].x], joueur_actuel);
                         printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
                     }
 
                     if(choix == 'e'){
-                        p++;
+                        p = (p + 1)%5;
                         while(emplacement_pion[p] == 0){
                             p = (p + 1)%5;
                         } 
                         // Place le pion
                         grille[liste_placements[e].y][liste_placements[e].x].m.cotes = p;
-                        affichage(grille, taille_x, taille_y, tuiles_placees[index]);
+                        affichage(grille, taille_x, taille_y, grille[liste_placements[e].y][liste_placements[e].x], joueur_actuel);
                         printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
                     }
                 }
                 while(choix != 'v');
                 printf("Pion placée !\n");
+                j[joueur_actuel].nbm--;
+
+                // Maj du max si nécessaire
+                info_structure_pion[p][joueur_actuel] ++;
+                for(int structure = 0; structure < 4; structure++){
+                    int maxi_pion = 0;
+                    printf("DEBUG: init maxi pion %d\n", maxi_pion);
+                    // Def maxi_pion
+                    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                        if (maxi_pion < info_structure_pion[structure][joueur]){
+                            maxi_pion = info_structure_pion[structure][joueur];
+                        }
+                    }
+                    liste_maxi_pion[structure] = maxi_pion;
+                }
+                printf("Mise à jour nbm pour %d: %d\n", joueur_actuel, j[joueur_actuel].nbm);
+            }
+        }
+        // Def de finitions de structure
+        struct coords c_abbaye = verif_abbaye(grille, tuiles_placees[index]);
+        if(c_abbaye.x != tuiles_placees[index].c.x && grille[c_abbaye.y][c_abbaye.x].m.id != -1 && grille[c_abbaye.y][c_abbaye.x].m.cotes == 4){    
+            int res = score_abbaye(grille, grille[c_abbaye.y][c_abbaye.x].c.x, grille[c_abbaye.y][c_abbaye.x].c.y);
+            printf("RES = %d\n", res);
+            if(res == 9){
+                printf("ABBAYE COMPLETE !!!\n");
+                // Attribution des points de l'abbaye
+                j[grille[c_abbaye.y][c_abbaye.x].m.id].score += 9;
+                j[grille[c_abbaye.y][c_abbaye.x].m.id].nbm++;
+                grille[c_abbaye.y][c_abbaye.x].traitee[4] = -2;
             }
         }
 
+        lock_structure(grille, tuiles_placees, -1);
+        for(int structure = 0; structure < 4; structure++){
+            if(info_structure_res[structure] == 1){
+                printf("Bien BINE rentré dans le if\n");
+                printf("DEBUG LISTE MAXI : %d\n", liste_maxi_pion[structure]);
+                // Si un joueur a un nombre de pion = à maxi_pion, rajoute le score
+                if(liste_maxi_pion[structure] != 0){
+                    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                        // Attribution des points
+                        if(info_structure_pion[structure][joueur] == liste_maxi_pion[structure]){
+                            j[joueur].score += info_structure_score[structure];
+                            printf("DEBUG Score du joueur %d: %d\n", joueur, j[joueur].score);
+                        }
+                        // Redistribue les pions
+                        j[joueur].nbm += info_structure_pion[structure][joueur];
+                        printf("DEBUG structure complète nb pion par joueur: (j%d) %d\n", joueur, j[joueur].nbm);
+                    }
+                }
+            }
+        }
     }
     else{
         printf("\e[43mRepioche car aucun emplacement trouvé\e[0m\n");
     }
 
-    // Debug de tout les placements possible en un seul affichage
+
     
 
     index++;

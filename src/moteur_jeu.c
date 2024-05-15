@@ -94,6 +94,7 @@ int main(int argc, char * argv[])
         tour(j, pioche, grille, tuiles_placees, index_pioche, nb_joueurs+nb_ia, joueur_actuel);
         index_pioche++;
         joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
+        printf("DEBUG JOUEUR ID: %d\n", joueur_actuel);
     }
 
     // Score final

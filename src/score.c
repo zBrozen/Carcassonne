@@ -25,22 +25,23 @@ void reset_traitee(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72
     }
 }
 
-void lock_structure(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72]){
+void lock_structure(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int value){
+    /* Permet de vérouiller une structure avec value qui prend : -1 valeur lock et -2 valeur intermédiaire*/
     for(int i = 0; i < 72 && tuiles_placees[i].id != -1; i++){
-        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[0] == 1){
-            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[0] = -1;
+        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[0] == 1 || grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[0] == -2){
+            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[0] = value;
         }
-        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[1] == 1){
-            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[1] = -1;
+        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[1] == 1 || grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[1] == -2){
+            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[1] = value;
         }
-        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[2] == 1){
-            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[2] = -1;
+        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[2] == 1 || grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[2] == -2){
+            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[2] = value;
         }
-        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[3] == 1){
-            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[3] = -1;
+        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[3] == 1 || grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[3] == -2){
+            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[3] = value;
         }
-        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] == 1){
-            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] = -1;
+        if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] == 1 || grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] == -2){
+            grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] = value;
         }
     }
 }
@@ -51,10 +52,10 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
 
     printf("\nDebut de la fonction: tuile: %d, position: %d\n", tuile_actuelle.id, position);
 
-    // Verif pion
-    if(tuile_actuelle.m.id != -1 && tuile_actuelle.m.cotes == position){
+    // Verif pion (si pion existe et si je suis sur la position du pion)
+    if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.id != -1 && grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.cotes == position){
         printf("\e[45mPion trouvé ! Utilisateur : %d\e[0m\n", tuile_actuelle.m.id);
-        pion[tuile_actuelle.m.id]++;
+        pion[grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.id]++; // Incrémente le nb de pion d'un joueur de 1
     }
 
     // Variables qui définit si la structure est ouverte ou non
@@ -73,7 +74,8 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
             printf("Centre0 -> centre non traitee\n");
             // Centre compatible -> appel récursif pos = centre
             if(tuile_actuelle.centre == structure ||
-            (tuile_actuelle.centre == 'b' && structure == 'v')){
+            (tuile_actuelle.centre == 'b' && structure == 'v') ||
+            (tuile_actuelle.centre == 'v' && structure == 'b')){
                 printf("Centre1 ok\n");
                 res_centre = parcours_structure(grille, tuile_actuelle, structure, 4, score, pion);
             }
@@ -186,25 +188,29 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
         // Vérifie l'état des bords de la tuile actuelle et leur compatibilité
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[0] == 0 &&
         (tuile_actuelle.cotes[0] == structure ||
-        (tuile_actuelle.cotes[0] == 'b' && structure == 'v'))){
+        (tuile_actuelle.cotes[0] == 'b' && structure == 'v') ||
+        (tuile_actuelle.cotes[0] == 'v' && structure == 'b'))){
             printf("bord gauche\n");
             res0 = parcours_structure(grille, tuile_actuelle, structure, 0, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1] == 0 &&
         (tuile_actuelle.cotes[1] == structure ||
-        (tuile_actuelle.cotes[1] == 'b' && structure == 'v'))){
+        (tuile_actuelle.cotes[1] == 'b' && structure == 'v') ||
+        (tuile_actuelle.cotes[1] == 'v' && structure == 'b'))){
             printf("bord haut\n");
             res1 = parcours_structure(grille, tuile_actuelle, structure, 1, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2] == 0 &&
         (tuile_actuelle.cotes[2] == structure ||
-        (tuile_actuelle.cotes[2] == 'b' && structure == 'v'))){
+        (tuile_actuelle.cotes[2] == 'b' && structure == 'v') ||
+        (tuile_actuelle.cotes[2] == 'v' && structure == 'b'))){
             printf("bord droit\n");
             res2 = parcours_structure(grille, tuile_actuelle, structure, 2, score, pion);
         }
         if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3] == 0 &&
         (tuile_actuelle.cotes[3] == structure ||
-        (tuile_actuelle.cotes[3] == 'b' && structure == 'v'))){
+        (tuile_actuelle.cotes[3] == 'b' && structure == 'v') ||
+        (tuile_actuelle.cotes[3] == 'v' && structure == 'b'))){
             printf("bord bas\n");
             res3 = parcours_structure(grille, tuile_actuelle, structure, 3, score, pion);
         }
@@ -234,34 +240,29 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
     return 1;
 }
 
-int poser_pion(struct joueur j, struct tuile_s grille[G][G], struct tuile_s tuile, int cotes, int res){
-    /* Fonction permettant de déterminer si un pion peut être posée, donc si aucun autre n'est voisin de la tuile actuelle 
-    Prend en paramètre le cotes qui déterminera le type de structure sur laquelle le pion doit être posé*/
-
-    int sens = 0; // Indique le sens dans lequel parcourir la tuile (vers le centre: 0, vers l'extérieur: 1, vers un bord: 2)
-    // Conditions qui compare le type de structure entre le bord ou le centre, avec une autre tuile, le centre, ou un bord de tuile
-    if(cotes == 3 && tuile.traitee[3] == 0){
-        if(sens == 1){
-            if(tuile.cotes[3] == grille[tuile.c.y+1][tuile.c.x].cotes[1]){
-                tuile.traitee[3] = 1;
-                // res = poser_pion(j, grille, grille[tuile.c.y+1][tuile.c.x], 1, res);
+struct coords verif_abbaye(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle){
+    struct coords c;
+    c.x = tuile_actuelle.c.x; c.y = tuile_actuelle.c.y;
+    for(int lig = c.y-1; lig < c.y+2; lig++){
+        for(int col = c.x-1; col < c.x+2; col++){
+            if(grille[lig][col].centre == 'a'){
+                c.x = col; c.y = lig;
+                return c;
             }
         }
-        // else if(sens == 0){
-        //     if(tuile.cotes[3] == tuile.centre){
+    }
+    return c;
+}
 
-        //     }
-        // }
+int score_abbaye(struct tuile_s grille[G][G], int x, int y){
+    int res = 0;
+    for(int lig = y-1; lig < y+2; lig++){
+        for(int col = x-1; col < x+2; col++){
+            if(grille[lig][col].id != -1){
+                printf("AH OUI en coord x: %d et y: %d\n", col, lig);
+                res++;
+            } 
+        }
     }
     return res;
-    // if(cotes == 1){
-    //     if(tuile.cotes[1] == grille[tuile.c.y-1][tuile.c.x].cotees[3])
-    // }
-    
-    // if(cotes == 2){
-    //     if(tuile.cotes[2] == grille[tuile.c.y][tuile.c.x+1].cotees[0])
-    // }
-    // if(cotes == 0){
-    //     if(tuile.cotes[0] == grille[tuile.c.y][tuile.c.x-1].cotees[2])
-    // }
 }

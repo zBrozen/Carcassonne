@@ -18,24 +18,28 @@ int recherche_tuile(struct tuile_s grille[G][G], int lig, int dx){
     return 0;
 }
 
-void affichage_couleurs(char c, int id, int m){
+void affichage_couleurs(char c, int id, int m, int traitee){
     if(id == -2){
         printf("\e[40m\e[0;37m%c\e[0m", c);
     }
+    // Cas si il y a un pion sur la tuile
     else if(m != -1){
         if(c == 'v') printf("\e[41m%d\e[0m", m); // Rouge
         if(c == 'p') printf("\e[42m%d\e[0m", m); // Vert
         if(c == 'a') printf("\e[45m%d\e[0m", m); // Violet
-        if(c == 'r') printf("\e[46m%d\e[0m", m); // Bleu cyan
-        if(c == 'f') printf("\e[44m%d\e[0m", m); // Bleu foncé
+        if(c == 'r') printf("\e[44m%d\e[0m", m); // Bleu foncé
+        if(c == 'f') printf("\e[40m%d\e[0m", m); // Noir
         if(c == 'b') printf("\e[43m%d\e[0m", m); // Jaune
+    }
+    else if(traitee == -1){
+        printf("\e[47m\e[30m%c\e[0m", c);
     }
     else{
         if(c == 'v') printf("\e[41m \e[0m"); // Rouge
         if(c == 'p') printf("\e[42m \e[0m"); // Vert
-        if(c == 'r') printf("\e[46m \e[0m"); // Bleu cyan
+        if(c == 'r') printf("\e[44m \e[0m"); // Bleu foncé
         if(c == 'a') printf("\e[45m \e[0m"); // Violet
-        if(c == 'f') printf("\e[44m \e[0m"); // Bleu foncé
+        if(c == 'f') printf("\e[40m \e[0m"); // Noir
         if(c == 'b') printf("\e[43m \e[0m"); // Jaune
     }
 }
@@ -47,7 +51,7 @@ void afficher_tuile(struct tuile_s t){
     printf("\n\n");
 }
 
-void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile){
+void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile, int id_joueur){
     /* Affiche la grille qui affichera un terrain de taille 143x143.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 8x8 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
@@ -71,16 +75,22 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
                     // Place un pion si il en existe un sur la tuile dans la grille
-                    if(grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 1){
-                        affichage_couleurs(grille[lig][col].cotes[1], grille[lig][col].id, tuile.m.id); printf("  ");
+                    if(grille[lig][col].traitee[1] != -1 && grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 1){
+                        affichage_couleurs(grille[lig][col].cotes[1], grille[lig][col].id, grille[lig][col].m.id, 0); printf("  ");
                     }
                     else {
-                        affichage_couleurs(grille[lig][col].cotes[1], grille[lig][col].id, -1); 
+                        affichage_couleurs(grille[lig][col].cotes[1], grille[lig][col].id, -1, grille[lig][col].traitee[1]); 
                         printf("  ");
                     }
                     // printf("%c  ", grille[lig][col].cotes[1]);
                 }
                 else printf("   ");
+            }
+            
+            // Affichage du joueur au dessus de la prévisu à droite
+            if(lig == dy){
+                printf("       ");
+                printf("Joueur %d", id_joueur);
             }
 
             // Affichage tête de la tuile à droite
@@ -97,20 +107,20 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             printf("  "); // Esp de 4 depuis l'axe
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    if(grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 0){
-                        affichage_couleurs(grille[lig][col].cotes[0], grille[lig][col].id, tuile.m.id); 
+                    if(grille[lig][col].traitee[0] != -1 && grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 0){
+                        affichage_couleurs(grille[lig][col].cotes[0], grille[lig][col].id, grille[lig][col].m.id, 0); 
                     }
-                    else affichage_couleurs(grille[lig][col].cotes[0], grille[lig][col].id, -1); 
+                    else affichage_couleurs(grille[lig][col].cotes[0], grille[lig][col].id, -1, grille[lig][col].traitee[0]); 
 
-                    if(grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 5){
-                        affichage_couleurs(grille[lig][col].centre, grille[lig][col].id, tuile.m.id); 
+                    if(grille[lig][col].traitee[4] != -1 && grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 4){
+                        affichage_couleurs(grille[lig][col].centre, grille[lig][col].id, grille[lig][col].m.id, 0); 
                     }
-                    else affichage_couleurs(grille[lig][col].centre, grille[lig][col].id, -1); 
+                    else affichage_couleurs(grille[lig][col].centre, grille[lig][col].id, -1, grille[lig][col].traitee[4]); 
                     
-                    if(grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 2){
-                        affichage_couleurs(grille[lig][col].cotes[2], grille[lig][col].id, tuile.m.id);
+                    if(grille[lig][col].traitee[2] != -1 && grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 2){
+                        affichage_couleurs(grille[lig][col].cotes[2], grille[lig][col].id, grille[lig][col].m.id, 0);
                     }
-                    affichage_couleurs(grille[lig][col].cotes[2], grille[lig][col].id, -1);
+                    else affichage_couleurs(grille[lig][col].cotes[2], grille[lig][col].id, -1, grille[lig][col].traitee[2]);
                     // printf("%c%c%c", grille[lig][col].cotes[0], grille[lig][col].centre, grille[lig][col].cotes[2]);
                 }
                 else printf("   ");
@@ -126,11 +136,11 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             printf("\n     ");
             for(int col = dx; col < dx+N; col++){
                 if(grille[lig][col].id != -1){
-                    if(grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 1){
-                        affichage_couleurs(grille[lig][col].cotes[3], grille[lig][col].id, tuile.m.id); printf("  ");
+                    if(grille[lig][col].traitee[3] != -1 && grille[lig][col].m.id != -1 && grille[lig][col].m.cotes == 3){
+                        affichage_couleurs(grille[lig][col].cotes[3], grille[lig][col].id, grille[lig][col].m.id, 0); printf("  ");
                     }
                     else {
-                        affichage_couleurs(grille[lig][col].cotes[3], grille[lig][col].id, -1);
+                        affichage_couleurs(grille[lig][col].cotes[3], grille[lig][col].id, -1, grille[lig][col].traitee[3]);
                         printf("  ");
                     }
                     // printf("%c  ", grille[lig][col].cotes[3]);
@@ -145,6 +155,11 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             }
         }
         else{
+            // Affichage du joueur au dessus de la prévisu à droite
+            if(lig == dy){
+                printf("\t\t\t\t    ");
+                printf("Joueur %d", id_joueur);
+            } 
             // Affichage tête de la tuile à droite
             if(lig == dy+1){
                 // Espacement avec la grille + affichage tête
@@ -164,6 +179,7 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             }
             
             printf("\n");
+
 
             // Affichage pied de la tuile à droite
             if(lig == dy+1){

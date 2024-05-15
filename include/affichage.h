@@ -10,6 +10,6 @@ void afficher_tuile(struct tuile_s t);
 
 void affichage_couleurs(char c, int id);
 
-void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile);
+void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile, int id_joueur);
 
 #endif // Affichage
