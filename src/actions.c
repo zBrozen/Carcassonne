@@ -390,6 +390,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
     /*Effectue un tour pour un certain joueur (ne se lance que si index < 72)
     Le paramètre "index" indique les tuiles restantes dans la pioche artificiellement (car je ne fais que avancer dans la pioche sans retirer les tuiles)*/
     
+    srand(time(NULL));
     // Pioche de tuile
     struct tuile_s tuile;
     tuile = piocher(pioche, index);
@@ -417,7 +418,12 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
     if(taille_liste != 0){
 
         // Choix du joueur
-        char c = 'x'; // Variable de choix de placement
+        char c;
+        if(j[joueur_actuel].ia == 1){
+            printf("OK");
+            e = rand()%taille_liste;
+        } 
+        c = 'x'; // Variable de choix de placement
         int y = liste_placements[e].y, x = liste_placements[e].y;
         int taille_x = x-(N/2); int taille_y = y-(N/2);
         if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
@@ -425,19 +431,32 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
 
         previsu(grille, tuile, liste_placements, e);
         while(c != 'v'){ // v pour valider
+            printf("\e[43mEntré dans la boucle\e[0m\n");
+            // Si ia, def choix placement à v
+            if(j[joueur_actuel].ia == 1){
+                c = 'v';
+                previsu(grille, tuile, liste_placements, e);
+                printf("\e[43mIA DE MERDE\e[0m\n");
+            } 
+
             y = liste_placements[e].y, x = liste_placements[e].x;
             taille_x = x-(N/2); taille_y = y-(N/2);
             if (taille_x < 0) taille_x = 0; // Limitation de la grille avec les bords à gauche
             if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
             if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
             if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
+            printf("\e[42mPREMIER AFFICHAGE\e[0m\n\n");
             affichage(grille, taille_x, taille_y, tuile, joueur_actuel, j, nb_joueurs, index);
             printf("\nDebug e = %d et taille liste = %d id tuile = %d\nDebug coords: x->%d et y->%d taille_x->%d et taille_y->%d", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id, 
             liste_placements[e].x, liste_placements[e].y, taille_x, taille_y);
             printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement, d: visualisation de la grille): ");
-            scanf("%c", &c);
-            clearBuffer();
-            // fflush(stdin);
+            // Si c'est un joueur et non une ia
+            printf("Joueur ia (id: %d): %d", joueur_actuel, j[joueur_actuel].ia);
+            if(j[joueur_actuel].ia == 0){
+                printf("Entré dans scanf\n");
+                scanf("%c", &c);
+                clearBuffer();
+            }
             printf("\n");
             switch(c){
                 case 'a':
@@ -587,14 +606,21 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
 
         // Détermine si le joueur possède au moins un pion et si oui, le propose de le placer
         if (cond_placement == 1 && j[joueur_actuel].nbm > 0){
-            char pose;
             printf("Voulez vous poser un pion ? (O/N) ");
-            do {
-                scanf("%c", &pose);
-                clearBuffer();
-                printf("\n");
+            char pose;  
+            if(j[joueur_actuel].ia == 0){
+                do {
+                    scanf("%c", &pose);
+                    clearBuffer();
+                    printf("\n");
+                }
+                while(pose != 'O' && pose != 'N');
             }
-            while(pose != 'O' && pose != 'N');
+            else{
+                int choix_pose[2] = {'O', 'N'};
+                pose = choix_pose[rand()%2];
+                printf("%c\n", pose);
+            }
             printf("Quitter l'autoroute !\n");
             if(pose == 'O'){
                 // Def l'id du pion
@@ -602,6 +628,12 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 // Def la variable de la position du pion
                 int p = 0;
                 char choix;
+                if(j[joueur_actuel].ia == 1){
+                    printf("OK2\n");
+                    p = rand()%5;
+                    int choix_direction[2] = {'a', 'e'};
+                    choix = choix_direction[rand()%2];
+                }
                 // Place le pion uniquement a l'endre disponible le plus proche
                 while(emplacement_pion[p] == 0) p = (p + 1)%5;
                 // Place le pion
@@ -612,8 +644,10 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 do {
                     printf("\n");
                     printf("DEBUG 2 Emplacement_pion: %d, structure %d\n", emplacement_pion[p], p);
-                    scanf("%c", &choix);
-                    clearBuffer();
+                    if(j[joueur_actuel].ia == 0){
+                        scanf("%c", &choix);
+                        clearBuffer();
+                    }
                     if(choix == 'a'){
                         printf("a selectionné\n");
                         p--;
@@ -638,6 +672,8 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                         affichage(grille, taille_x, taille_y, grille[liste_placements[e].y][liste_placements[e].x], joueur_actuel, j, nb_joueurs, index);
                         printf("Choisissez l'emplacement du pion (v: placer le pion, a: emplacement précédent, e: emplacement suivant): ");
                     }
+
+                    if(j[joueur_actuel].ia == 1) choix = 'v';
                 }
                 while(choix != 'v');
                 printf("Pion placée !\n");

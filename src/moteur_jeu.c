@@ -30,18 +30,15 @@ void init_tuiles_placees(struct tuile_s tuiles_placees[72]){
 
 struct joueur * init_joueur(int nb_ia, int nb_joueurs){
     struct joueur *j;
-    int n, joueur;
-    j = malloc(nb_joueurs * sizeof(struct joueur));
+    j = malloc((nb_joueurs+nb_ia) * sizeof(struct joueur));
 
-    if(nb_joueurs > nb_ia) n = nb_joueurs-nb_ia;
-    else n = nb_ia - nb_joueurs;
-    for(joueur = 0; joueur < n; joueur++){
+    for(int joueur = 0; joueur < nb_joueurs; joueur++){
         j[joueur].id = joueur;
         j[joueur].nbm = 8;
         j[joueur].ia = 0;
         j[joueur].score = 0;
     }
-    for(int ia = joueur; ia < nb_joueurs+nb_ia; ia++){
+    for(int ia = nb_joueurs; ia < nb_joueurs+nb_ia; ia++){
         j[ia].id = ia;
         j[ia].nbm = 8;
         j[ia].ia = 1;
@@ -83,14 +80,18 @@ int main(int argc, char * argv[])
     tuiles_placees[0].c.x = 71;
     tuiles_placees[0].c.y = 71;
 
-    int nb_joueurs, nb_ia = 0, joueur_actuel = 0;
+    int nb_joueurs, nb_ia, joueur_actuel = 0;
     printf("Entrer le nombre de joueurs: ");
     scanf("%d", &nb_joueurs);
     clearBuffer();
+    printf("Entrer le nombre d'ia: ");
+    scanf("%d", &nb_ia);
+    clearBuffer();
     struct joueur * j = init_joueur(nb_ia, nb_joueurs);
+    printf("info ia: %d", j[1].ia);
 
     int index_pioche = 1;
-    while(index_pioche < 10){
+    while(index_pioche < 72){
         tour(j, pioche, grille, tuiles_placees, index_pioche, nb_joueurs+nb_ia, joueur_actuel);
         index_pioche++;
         joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
@@ -102,7 +103,7 @@ int main(int argc, char * argv[])
     int score = 1;
     int pion[5] = {0, 0, 0, 0, 0};
     int maxi_pion;
-    for(int tuile = 0; tuile < 10; tuile++){
+    for(int tuile = 0; tuile < 72; tuile++){
         printf("\e[44mTuile %d\e[0m\n", tuile);
         // Check Abbaye
         if(grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id != -1 && tuiles_placees[tuile].centre == 'a'){
@@ -121,13 +122,13 @@ int main(int argc, char * argv[])
 
             lock_structure(grille, tuiles_placees, -1);
             // Def maxi_pion
-            for(int joueur = 0; joueur < nb_joueurs; joueur++){
+            for(int joueur = 0; joueur < nb_joueurs+nb_ia; joueur++){
                 if (maxi_pion < pion[joueur]){
                     maxi_pion = pion[joueur];
                 }
             }
             if(maxi_pion > 0){
-                for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                for(int joueur = 0; joueur < nb_joueurs+nb_ia; joueur++){
                     if(pion[joueur] == maxi_pion){
                         j[joueur].score += score;
                         printf("GAIN DE POINTS pour j%d: %d avec +%d\n", joueur, j[joueur].score, score);
@@ -136,7 +137,7 @@ int main(int argc, char * argv[])
             }
         }
     }
-    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+    for(int joueur = 0; joueur < nb_joueurs+nb_ia; joueur++){
         printf("SCORE FINAL DE J%d: %d\n", joueur, j[joueur].score);
     }
 
