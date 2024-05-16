@@ -90,7 +90,7 @@ int main(int argc, char * argv[])
     struct joueur * j = init_joueur(nb_ia, nb_joueurs);
 
     int index_pioche = 1;
-    while(index_pioche < 72){
+    while(index_pioche < 10){
         tour(j, pioche, grille, tuiles_placees, index_pioche, nb_joueurs+nb_ia, joueur_actuel);
         index_pioche++;
         joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
@@ -98,7 +98,47 @@ int main(int argc, char * argv[])
     }
 
     // Score final
-    
+    printf("\e[45m FIN DE TOUR FINAL\e[0m\n");
+    int score = 1;
+    int pion[5] = {0, 0, 0, 0, 0};
+    int maxi_pion;
+    for(int tuile = 0; tuile < 10; tuile++){
+        printf("\e[44mTuile %d\e[0m\n", tuile);
+        // Check Abbaye
+        if(grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id != -1 && tuiles_placees[tuile].centre == 'a'){
+            score = score_abbaye(grille, tuiles_placees[tuile].c.x, tuiles_placees[tuile].c.y);
+            j[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id].score += score;
+            printf("DANS ABBAYE Score: %d\n", score);
+        }
+        
+        else if(grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id != -1 &&
+        grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].traitee[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes] != -1){
+            // Reset variables
+            score = 1;
+            for(int i = 0; i < 5; i++) pion[i] = 0;
+            maxi_pion = 0;
+            parcours_structure(grille, tuiles_placees[tuile], tuiles_placees[tuile].cotes[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes], grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes, &score, pion);
+
+            lock_structure(grille, tuiles_placees, -1);
+            // Def maxi_pion
+            for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                if (maxi_pion < pion[joueur]){
+                    maxi_pion = pion[joueur];
+                }
+            }
+            if(maxi_pion > 0){
+                for(int joueur = 0; joueur < nb_joueurs; joueur++){
+                    if(pion[joueur] == maxi_pion){
+                        j[joueur].score += score;
+                        printf("GAIN DE POINTS pour j%d: %d avec +%d\n", joueur, j[joueur].score, score);
+                    }
+                }
+            }
+        }
+    }
+    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+        printf("SCORE FINAL DE J%d: %d\n", joueur, j[joueur].score);
+    }
 
 
     printf("FIN de partie\n");

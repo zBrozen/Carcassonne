@@ -54,7 +54,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
 
     // Verif pion (si pion existe et si je suis sur la position du pion)
     if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.id != -1 && grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.cotes == position){
-        printf("\e[45mPion trouvé ! Utilisateur : %d\e[0m\n", tuile_actuelle.m.id);
+        printf("\e[45mPion trouvé ! Utilisateur : %d\e[0m\n", grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.id);
         pion[grille[tuile_actuelle.c.y][tuile_actuelle.c.x].m.id]++; // Incrémente le nb de pion d'un joueur de 1
     }
 

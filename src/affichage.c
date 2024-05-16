@@ -44,6 +44,18 @@ void affichage_couleurs(char c, int id, int m, int traitee){
     }
 }
 
+void affichage_joueurs(struct joueur * j, int nb_joueurs){
+    // Affichage de l'entête
+    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+        printf("Joueur %d\t\t", joueur);
+    }
+    printf("\n");
+    for(int joueur = 0; joueur < nb_joueurs; joueur++){
+        printf("Score: %d Meeples: %d\t", j[joueur].score, j[joueur].nbm);
+    }
+    printf("\n\n");
+}
+
 void afficher_tuile(struct tuile_s t){
     // Fonction de debug de tuile
     // system("clear");
@@ -51,12 +63,14 @@ void afficher_tuile(struct tuile_s t){
     printf("\n\n");
 }
 
-void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile, int id_joueur){
+void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile, int id_joueur, struct joueur * j, int nb_joueurs, int index){
     /* Affiche la grille qui affichera un terrain de taille 143x143.
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 8x8 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
 
-    // system("clear");
+    system("clear");
+
+    affichage_joueurs(j, nb_joueurs);
     
     printf("    "); // Espacement de base de l'axe (pour éviter de commencer au début)
     for(int col = dx; col < dx+N; col++){
@@ -153,6 +167,10 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
                 // Espacement avec la grille + affichage pied
                 printf("   \t%c", tuile.cotes[3]);
             }
+            if(lig == dy+2){
+                printf("  ");
+                printf("Tuiles restants: %d (%d)", 72-index, index);
+            }
         }
         else{
             // Affichage du joueur au dessus de la prévisu à droite
@@ -186,6 +204,11 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
                 printf("\t\t\t\t");
                 // Espacement avec la grille + affichage pied
                 printf("   \t%c", tuile.cotes[3]);
+            }
+
+            if(lig == dy+2){
+                printf("\t\t\t       ");
+                printf("Tuiles restants: %d (%d)", 72-index, index);
             }
         }
     }
