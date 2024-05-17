@@ -294,9 +294,9 @@ struct coords verif_abbaye(struct tuile_s grille[G][G], struct tuile_s tuile_act
     c.x = tuile_actuelle.c.x; c.y = tuile_actuelle.c.y;
     for(int lig = c.y-1; lig < c.y+2; lig++){
         for(int col = c.x-1; col < c.x+2; col++){
-            printf("(%d %d)\n", col, lig);
+            // printf("(%d %d)\n", col, lig);
             if(grille[lig][col].centre == 'a'){
-                printf("trouvé !\n");
+                // printf("trouvé !\n");
                 c.x = col; c.y = lig;
                 return c;
             }
