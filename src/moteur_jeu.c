@@ -28,23 +28,22 @@ void init_tuiles_placees(struct tuile_s tuiles_placees[72]){
         tuiles_placees[i].id = -1;
 }
 
-struct joueur * init_joueur(int nb_ia, int nb_joueurs){
-    struct joueur *j;
-    j = malloc((nb_joueurs+nb_ia) * sizeof(struct joueur));
+void init_joueur(struct joueur j[5], int nb_ia, int nb_joueurs){
+    // struct joueur *j;
+    // j = malloc((nb_joueurs+nb_ia) * sizeof(struct joueur));
 
     for(int joueur = 0; joueur < nb_joueurs; joueur++){
         j[joueur].id = joueur;
-        j[joueur].nbm = 8;
+        j[joueur].nbm = 7;
         j[joueur].ia = 0;
         j[joueur].score = 0;
     }
     for(int ia = nb_joueurs; ia < nb_joueurs+nb_ia; ia++){
         j[ia].id = ia;
-        j[ia].nbm = 8;
+        j[ia].nbm = 7;
         j[ia].ia = 1;
         j[ia].score = 0;
     }
-    return j;
 }
 
 int main(int argc, char * argv[])
@@ -55,11 +54,7 @@ int main(int argc, char * argv[])
     init_grille(grille);
     init_tuiles_placees(tuiles_placees);
 
-    // Debug affichage tuile
-    // for(int i = 0; i < 72; i++)
-    // afficher_tuile(pioche[i]);
-
-    // Init tuile initiale
+    // Init tuile initiale dans grille et dans la liste tuile_placees
     grille[71][71].id = pioche[0].id;
     grille[71][71].cotes[0] = pioche[0].cotes[0];
     grille[71][71].cotes[1] = pioche[0].cotes[1];
@@ -68,8 +63,7 @@ int main(int argc, char * argv[])
     grille[71][71].centre = pioche[0].centre;
     grille[71][71].c.x = 71;
     grille[71][71].c.y = 71;
-    // Init meeple
-    grille[71][71].m.id = -1;
+    grille[71][71].m.id = -1; // Init meeple
     
     tuiles_placees[0].id = pioche[0].id;
     tuiles_placees[0].cotes[0] = pioche[0].cotes[0];
@@ -87,7 +81,8 @@ int main(int argc, char * argv[])
     printf("Entrer le nombre d'ia: ");
     scanf("%d", &nb_ia);
     clearBuffer();
-    struct joueur * j = init_joueur(nb_ia, nb_joueurs);
+    struct joueur j[nb_ia+nb_joueurs];
+    init_joueur(j, nb_ia, nb_joueurs);
     printf("info ia: %d", j[1].ia);
 
     int index_pioche = 1;

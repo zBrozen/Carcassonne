@@ -14,7 +14,7 @@ struct tuile_s copie(struct tuile_s tuile);
 
 int doublon(struct coords liste_placements[72], struct tuile_s tuiles_placees[72], int t, int add_x, int add_y, int nb_rota);
 
-struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], struct tuile_s tuile);
+void def_liste_placements(struct coords liste[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], struct tuile_s tuile);
 
 void add_gr(struct tuile_s grille[G][G], struct tuile_s tuile, int x, int y);
 

@@ -68,7 +68,7 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 8x8 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
 
-    // system("clear");
+    system("clear");
 
     affichage_joueurs(j, nb_joueurs);
     
@@ -169,7 +169,7 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
             }
             if(lig == dy+2){
                 printf("  ");
-                printf("Tuiles restants: %d (%d)", 72-index, index);
+                printf("Tuiles restantes: %d", 72-index);
             }
         }
         else{
@@ -208,9 +208,11 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
 
             if(lig == dy+2){
                 printf("\t\t\t       ");
-                printf("Tuiles restants: %d (%d)", 72-index, index);
+                printf("Tuiles restantes: %d", 72-index);
             }
+
         }
     }
-    // printf("\n\n");
+    printf("\n\nLegende: \e[41m  \e[0m: Ville       \e[43m  \e[0m: Blason       \e[44m  \e[0m: Route       \e[45m  \e[0m: Abbaye       \e[42m  \e[0m: Pré       \e[40m  \e[0m: Village");
+    printf("\n\n");
 }

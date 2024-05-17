@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 #define G 143 // Taille de la grille
 #define N 8 // Taille de l'affichage de la grille
@@ -104,12 +105,12 @@ int doublon(struct coords liste_placements[72], struct tuile_s tuiles_placees[72
     return res;
 }
 
-struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
+void def_liste_placements(struct coords liste[72], struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], struct tuile_s tuile){
     /* Def une liste de possibilites qui permet de placer la tuile piochee */
 
     // Init liste
-    struct coords * liste;
-    liste = (struct coords *)malloc(72 * sizeof(struct coords));
+    // struct coords liste[72];
+    // liste = (struct coords *)malloc(72 * sizeof(struct coords));
     // Init de la liste qui permettra de déterminer sa taille (le nombre de coordonnées répertoriées dans la liste)
     for(int i = 0; i < 72; i++){
         liste[i].x = -1;
@@ -176,6 +177,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
 
                 // Def le placement 
                 if(ok == 1 && doublon(liste, tuiles_placees, tuile, t, -1, 0, nb_rota) == 0){
+                    printf("Ajout a liste\n");
                     liste[index].y = tuiles_placees[t].c.y;
                     liste[index].x = tuiles_placees[t].c.x - 1;
                     liste[index].rota = nb_rota;
@@ -223,6 +225,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
 
                 // Def le placement
                 if(ok == 1 && doublon(liste, tuiles_placees, tuile, t, 0, -1, nb_rota) == 0){
+                    printf("Ajout a liste\n");
                     liste[index].y = tuiles_placees[t].c.y - 1;
                     liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
@@ -277,6 +280,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
 
                 // Def le placement
                 if(ok == 1 && doublon(liste, tuiles_placees, tuile, t, 1, 0, nb_rota) == 0){
+                    printf("Ajout a liste\n");
                     liste[index].y = tuiles_placees[t].c.y;
                     liste[index].x = tuiles_placees[t].c.x + 1;
                     liste[index].rota = nb_rota;
@@ -331,6 +335,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
 
                 // Def le placement
                 if(ok == 1 && doublon(liste, tuiles_placees, tuile, t, 0, 1, nb_rota) == 0){
+                    printf("Ajout a liste\n");
                     liste[index].y = tuiles_placees[t].c.y + 1;
                     liste[index].x = tuiles_placees[t].c.x;
                     liste[index].rota = nb_rota;
@@ -344,7 +349,7 @@ struct coords * def_liste_placements(struct tuile_s grille[G][G], struct tuile_s
         }
         printf("nombre de tuile ajoutée: %d\n", compteur_debug);
     }
-    return liste;
+    // return liste;
 }
 
 void add_gr(struct tuile_s grille[G][G], struct tuile_s tuile, int x, int y){
@@ -399,8 +404,9 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
     // afficher_tuile(tuile);
 
     // Def liste compa pour définir les différents placements possible avec la tuile piochée
-    struct coords * liste_placements;
-    liste_placements = def_liste_placements(grille, tuiles_placees, tuile);
+    struct coords liste_placements[72];
+    def_liste_placements(liste_placements, grille, tuiles_placees, tuile);
+    printf("Test liste placements: (%d,%d)\n", liste_placements[0].x, liste_placements[0].y);
 
     
     // Choix du placement (parcours de la liste des placements et prévisualise la tuile sélectionnée)
@@ -413,6 +419,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
         e++;
     }
     e = 0;
+    printf("DEBUG e: %d\n", e);
 
     // Condition qui vérifie si il y a bien des tuiles dans la liste des placements (sinon anormal)
     if(taille_liste != 0){
@@ -431,12 +438,12 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
 
         previsu(grille, tuile, liste_placements, e);
         while(c != 'v'){ // v pour valider
-            printf("\e[43mEntré dans la boucle\e[0m\n");
+            // printf("\e[43mEntré dans la boucle\e[0m\n");
             // Si ia, def choix placement à v
             if(j[joueur_actuel].ia == 1){
                 c = 'v';
                 previsu(grille, tuile, liste_placements, e);
-                printf("\e[43mIA DE MERDE\e[0m\n");
+                // printf("\e[43mIA DE MERDE\e[0m\n");
             } 
 
             y = liste_placements[e].y, x = liste_placements[e].x;
@@ -445,15 +452,16 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
             if (taille_y < 0) taille_y = 0; // Limitation de la grille avec les bords en haut
             if (taille_x >= G) taille_x = G-5; // Limitation de la grille avec les bords à droite
             if (taille_y >= G) taille_y = G-5; // Limitation de la grille avec les bords en bas
-            printf("\e[42mPREMIER AFFICHAGE\e[0m\n\n");
+            // printf("\e[42mPREMIER AFFICHAGE\e[0m\n\n");
             affichage(grille, taille_x, taille_y, tuile, joueur_actuel, j, nb_joueurs, index);
-            printf("\nDebug e = %d et taille liste = %d id tuile = %d\nDebug coords: x->%d et y->%d taille_x->%d et taille_y->%d", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id, 
-            liste_placements[e].x, liste_placements[e].y, taille_x, taille_y);
+            if(j[joueur_actuel].ia == 1) sleep(1); // Pause de 2se
+            // printf("\nDebug e = %d et taille liste = %d id tuile = %d\nDebug coords: x->%d et y->%d taille_x->%d et taille_y->%d", e, taille_liste, grille[liste_placements[e].y][liste_placements[e].x].id, 
+            // liste_placements[e].x, liste_placements[e].y, taille_x, taille_y);
             printf("\nPlacer la tuile (a: placement précédent, e: placement suivant, v: valide placement, d: visualisation de la grille): ");
             // Si c'est un joueur et non une ia
-            printf("Joueur ia (id: %d): %d", joueur_actuel, j[joueur_actuel].ia);
+            // printf("Joueur ia (id: %d): %d", joueur_actuel, j[joueur_actuel].ia);
             if(j[joueur_actuel].ia == 0){
-                printf("Entré dans scanf\n");
+                // printf("Entré dans scanf\n");
                 scanf("%c", &c);
                 clearBuffer();
             }
@@ -514,7 +522,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
 
                     while(direction != 'x'){
                         affichage(grille, taille_x, taille_y, tuile, joueur_actuel, j, nb_joueurs, index);
-                        printf("\n1Entrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\n1Déplacement: ");
+                        printf("\nEntrer 'x' pour quitter; z: monter, q: gauche, s: descendre, d: droite\nDéplacement: ");
                         scanf("%c", &direction);
                         clearBuffer();
                         printf("\n");
@@ -620,6 +628,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 int choix_pose[2] = {'O', 'N'};
                 pose = choix_pose[rand()%2];
                 printf("%c\n", pose);
+                sleep(1); // Pause de 2se
             }
             printf("Quitter l'autoroute !\n");
             if(pose == 'O'){
@@ -680,7 +689,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
                 j[joueur_actuel].nbm--;
 
                 // Maj du max si nécessaire
-                info_structure_pion[p][joueur_actuel] ++;
+                info_structure_pion[p][joueur_actuel] ++; // Ajoute un pion a la liste
                 for(int structure = 0; structure < 4; structure++){
                     int maxi_pion = 0;
                     printf("DEBUG: init maxi pion %d\n", maxi_pion);
@@ -713,7 +722,6 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
         lock_structure(grille, tuiles_placees, -1);
         for(int structure = 0; structure < 4; structure++){
             if(info_structure_res[structure] == 1){
-                printf("Bien BINE rentré dans le if\n");
                 printf("DEBUG LISTE MAXI : %d\n", liste_maxi_pion[structure]);
                 // Si un joueur a un nombre de pion = à maxi_pion, rajoute le score
                 if(liste_maxi_pion[structure] != 0){
@@ -744,7 +752,7 @@ int tour(struct joueur j[5], struct tuile_s pioche[72], struct tuile_s grille[G]
         printf("id %d: %d\n", i, tuiles_placees[i].id);
     }
     printf("Tuiles restantes: %d\n", 72-index);
-    free_liste(liste_placements);
+    // free_liste(liste_placements);
 
     return 1;
 }

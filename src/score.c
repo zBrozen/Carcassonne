@@ -21,7 +21,6 @@ void reset_traitee(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72
         if(grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] == 1){
             grille[tuiles_placees[i].c.y][tuiles_placees[i].c.x].traitee[4] = 0;
         }
-        
     }
 }
 
@@ -104,7 +103,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
             // Vérif dans chaque cas si les tuiles extérieures existes et si elles sont non visités (pas besoin de vérification de compatibilité avec la tuile voisine)
             case 0:
                 if(tuile_actuelle.c.x - 1 >= 0 && grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].id != -1){
-                    if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].traitee[2] == 0){
+                    if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].traitee[2] == 0 || grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1].traitee[2] == -2){
                         printf("case 0\n");
                         (*score)++;
                         res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x - 1], structure, 2, score, pion);
@@ -122,7 +121,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 break;
             case 1:
                 if(tuile_actuelle.c.y - 1 >= 0 && grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].id != -1){
-                    if(grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].traitee[3] == 0){
+                    if(grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].traitee[3] == 0 || grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x].traitee[3] == -2){
                         printf("case 1\n");
                         (*score)++;
                         res0 = parcours_structure(grille, grille[tuile_actuelle.c.y - 1][tuile_actuelle.c.x], structure, 3, score, pion);
@@ -140,7 +139,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 break;
             case 2:
                 if(tuile_actuelle.c.x + 1 < G && grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].id != -1){
-                    if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].traitee[0] == 0){
+                    if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].traitee[0] == 0 || grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1].traitee[0] == -2){
                         printf("case 2\n");
                         (*score)++;
                         res0 = parcours_structure(grille, grille[tuile_actuelle.c.y][tuile_actuelle.c.x + 1], structure, 0, score, pion);
@@ -158,7 +157,7 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
                 break;
             case 3:
                 if(tuile_actuelle.c.y + 1 < G && grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].id != -1){
-                    if(grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].traitee[1] == 0){
+                    if(grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].traitee[1] == 0 || grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x].traitee[1] == -2){
                         printf("case 3\n");
                         (*score)++;
                         res0 = parcours_structure(grille, grille[tuile_actuelle.c.y + 1][tuile_actuelle.c.x], structure, 1, score, pion);
@@ -186,28 +185,36 @@ int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuell
         printf("On est au centre\n");
 
         // Vérifie l'état des bords de la tuile actuelle et leur compatibilité
-        if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[0] == 0 &&
+        printf("Traitee gauche: %d\n", grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[0]);
+        if((grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[0] == 0 ||
+        grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[0] == -2) &&
         (tuile_actuelle.cotes[0] == structure ||
         (tuile_actuelle.cotes[0] == 'b' && structure == 'v') ||
         (tuile_actuelle.cotes[0] == 'v' && structure == 'b'))){
             printf("bord gauche\n");
             res0 = parcours_structure(grille, tuile_actuelle, structure, 0, score, pion);
         }
-        if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1] == 0 &&
+        printf("Traitee haut: %d\n", grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1]);
+        if((grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1] == 0 ||
+        grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[1] == -2) &&
         (tuile_actuelle.cotes[1] == structure ||
         (tuile_actuelle.cotes[1] == 'b' && structure == 'v') ||
         (tuile_actuelle.cotes[1] == 'v' && structure == 'b'))){
             printf("bord haut\n");
             res1 = parcours_structure(grille, tuile_actuelle, structure, 1, score, pion);
         }
-        if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2] == 0 &&
+        printf("Traitee droit: %d\n", grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2]);
+        if((grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2] == 0 ||
+        grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[2] == -2) &&
         (tuile_actuelle.cotes[2] == structure ||
         (tuile_actuelle.cotes[2] == 'b' && structure == 'v') ||
         (tuile_actuelle.cotes[2] == 'v' && structure == 'b'))){
             printf("bord droit\n");
             res2 = parcours_structure(grille, tuile_actuelle, structure, 2, score, pion);
         }
-        if(grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3] == 0 &&
+        printf("Traitee bas: %d\n", grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3]);
+        if((grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3] == 0 ||
+        grille[tuile_actuelle.c.y][tuile_actuelle.c.x].traitee[3] == -2) &&
         (tuile_actuelle.cotes[3] == structure ||
         (tuile_actuelle.cotes[3] == 'b' && structure == 'v') ||
         (tuile_actuelle.cotes[3] == 'v' && structure == 'b'))){

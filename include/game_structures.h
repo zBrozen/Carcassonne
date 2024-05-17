@@ -33,6 +33,6 @@ struct tuile_s{
 // Fonctions dans moteur_jeu.c
 void init_grille(struct tuile_s grille[G][G]);
 void init_tuiles_placees(struct tuile_s tuiles_placees[72]);
-struct joueur * init_joueur(int nb_ia, int nb_joueurs);
+void init_joueur(struct joueur j[5], int nb_ia, int nb_joueurs);
 
 #endif // GAME_STRUCTURES

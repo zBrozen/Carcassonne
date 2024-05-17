@@ -77,6 +77,5 @@ void melange_pioche(struct tuile_s * pioche){
         pioche[ra].cotes[3] = tempc3;
         pioche[ra].centre = tempc4;
 
-        //printf("t_melange[%d]=%d\n", i, t_ordre[i]);
     }
 }
