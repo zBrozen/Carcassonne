@@ -83,12 +83,12 @@ int main(int argc, char * argv[])
     clearBuffer();
     struct joueur j[nb_ia+nb_joueurs];
     init_joueur(j, nb_ia, nb_joueurs);
-    printf("info ia: %d", j[1].ia);
+    // printf("info ia: %d", j[1].ia);
 
     int index_pioche = 1;
     while(index_pioche < 72){
         if(pioche[index_pioche].id != -1){
-            tour(j, pioche, grille, tuiles_placees, &index_pioche, nb_joueurs+nb_ia, joueur_actuel);
+            tour(j, pioche, grille, tuiles_placees, &index_pioche, nb_joueurs+nb_ia, &joueur_actuel);
             index_pioche++;
             joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
             // printf("DEBUG JOUEUR ID: %d\n", joueur_actuel);
@@ -97,17 +97,17 @@ int main(int argc, char * argv[])
     }
 
     // Score final
-    printf("\e[45m FIN DE TOUR FINAL\e[0m\n");
+    // printf("\e[45m FIN DE TOUR FINAL\e[0m\n");
     int score = 1;
     int pion[5] = {0, 0, 0, 0, 0};
     int maxi_pion;
     for(int tuile = 0; tuile < 72; tuile++){
-        printf("\e[44mTuile %d\e[0m\n", tuile);
+        // printf("\e[44mTuile %d\e[0m\n", tuile);
         // Check Abbaye
         if(grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id != -1 && tuiles_placees[tuile].centre == 'a'){
             score = score_abbaye(grille, tuiles_placees[tuile].c.x, tuiles_placees[tuile].c.y);
             j[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id].score += score;
-            printf("DANS ABBAYE Score: %d\n", score);
+            // printf("DANS ABBAYE Score: %d\n", score);
         }
         
         else if(grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.id != -1 &&
@@ -129,7 +129,7 @@ int main(int argc, char * argv[])
                 for(int joueur = 0; joueur < nb_joueurs+nb_ia; joueur++){
                     if(pion[joueur] == maxi_pion){
                         j[joueur].score += score;
-                        printf("GAIN DE POINTS pour j%d: %d avec +%d\n", joueur, j[joueur].score, score);
+                        // printf("GAIN DE POINTS pour j%d: %d avec +%d\n", joueur, j[joueur].score, score);
                     }
                 }
             }
