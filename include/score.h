@@ -8,7 +8,7 @@ void reset_traitee(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72
 
 void lock_structure(struct tuile_s grille[G][G], struct tuile_s tuiles_placees[72], int value);
 
-int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle, char structure, int position, int * score, int * pion);
+int parcours_structure(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle, char structure, int position, int * score, int * pion, int score_final);
 
 struct coords verif_abbaye(struct tuile_s grille[G][G], struct tuile_s tuile_actuelle);
 

@@ -68,7 +68,7 @@ void affichage(struct tuile_s grille[G][G], int dx, int dy, struct tuile_s tuile
     L'affichage ne montrera qu'un segment du terrain qui sera de taille 8x8 
     Les paramètres dx/dy placent la grille à certaines coordonnées*/
 
-    system("clear");
+    // system("clear");
 
     affichage_joueurs(j, nb_joueurs);
     

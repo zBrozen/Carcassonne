@@ -87,10 +87,13 @@ int main(int argc, char * argv[])
 
     int index_pioche = 1;
     while(index_pioche < 72){
-        tour(j, pioche, grille, tuiles_placees, index_pioche, nb_joueurs+nb_ia, joueur_actuel);
-        index_pioche++;
-        joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
-        printf("DEBUG JOUEUR ID: %d\n", joueur_actuel);
+        if(pioche[index_pioche].id != -1){
+            tour(j, pioche, grille, tuiles_placees, &index_pioche, nb_joueurs+nb_ia, joueur_actuel);
+            index_pioche++;
+            joueur_actuel = (joueur_actuel + 1) % (nb_joueurs+nb_ia);
+            // printf("DEBUG JOUEUR ID: %d\n", joueur_actuel);
+        }
+        else printf("\e[46mTuile déjà piochée\e[0m\n");
     }
 
     // Score final
@@ -113,7 +116,7 @@ int main(int argc, char * argv[])
             score = 1;
             for(int i = 0; i < 5; i++) pion[i] = 0;
             maxi_pion = 0;
-            parcours_structure(grille, tuiles_placees[tuile], tuiles_placees[tuile].cotes[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes], grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes, &score, pion);
+            parcours_structure(grille, tuiles_placees[tuile], tuiles_placees[tuile].cotes[grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes], grille[tuiles_placees[tuile].c.y][tuiles_placees[tuile].c.x].m.cotes, &score, pion, 1);
 
             lock_structure(grille, tuiles_placees, -1);
             // Def maxi_pion
