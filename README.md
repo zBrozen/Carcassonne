@@ -5,10 +5,10 @@ L'objectif est de reproduire les mécaniques du jeu tout en respectant ses règl
 ---
 ## Table des matières
 1. [Fonctionnalités](#fonctionnalités)
-2. [Spécifications Techniques](#spécifications techniques)
-3. [Installation et Compilation](#installation et compilation)
-4. [Rapport d'Analyse](#rapport d'analyse)
-5. [Rapport d'Implémentation](#rapport d'implémentation)
+2. [Spécifications Techniques](#spécifications-techniques)
+3. [Installation et Compilation](#installation-et-compilation)
+4. [Rapport d'Analyse](#rapport-d'analyse)
+5. [Rapport d'Implémentation](#rapport-d'implémentation)
 
 ---
 
